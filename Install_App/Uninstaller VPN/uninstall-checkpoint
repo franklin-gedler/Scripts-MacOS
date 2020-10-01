@@ -1,0 +1,129 @@
+#/bin/sh
+IAM=`/usr/bin/id -u`
+MORE=/usr/bin/more
+AWK=awk
+CAT=/bin/cat
+CD=cd
+CHMOD=/bin/chmod
+CHOWN=/usr/sbin/chown
+CHGRP=/usr/bin/chgrp
+FILE=/usr/bin/file
+CP=/bin/cp
+ECHO=/bin/echo
+LN=/bin/ln
+MKDIR=/bin/mkdir
+MV=/bin/mv
+RM=/bin/rm
+SED=sed
+TAR=tar
+TOUCH=/usr/bin/touch
+IAM=`/usr/bin/id -u`
+MORE=/usr/bin/more
+EPC_SUPPORT_DIR="/Library/Application Support/Checkpoint/Endpoint Connect"
+
+
+umask 007
+
+# uninstall_eps may be called with the --uninstall option only when running from root.
+# If we weren't called with that option, ask the user whether to continue,
+# and if we should continue, run this script again,
+# by using the incredible authrization tool
+if [ "$1" != "--uninstall" ]; then
+	$ECHO " "
+	$ECHO ' '
+	$ECHO =========================================================
+	$ECHO 	Welcome to Check Point EPS For Mac OS-X
+	$ECHO =========================================================
+	$ECHO " "
+	$ECHO	This operation will uninstall Endpoint Connect.
+
+	read -p "Do you wish to continue (yes/no)? " CONTINUE_UNINSTALL_STRING
+	CONTINUE_UNINSTALL=0
+
+	if [ "$CONTINUE_UNINSTALL_STRING" == "yes" ]; then
+		CONTINUE_UNINSTALL=1
+	fi
+	if [ "$CONTINUE_UNINSTALL_STRING" == "YES" ]; then
+		CONTINUE_UNINSTALL=1
+	fi
+	if [ "$CONTINUE_UNINSTALL_STRING" == "Yes" ]; then
+		CONTINUE_UNINSTALL=1
+	fi
+	if [ "$CONTINUE_UNINSTALL_STRING" == "y" ]; then
+		CONTINUE_UNINSTALL=1
+	fi
+	if [ "$CONTINUE_UNINSTALL_STRING" == "Y" ]; then
+		CONTINUE_UNINSTALL=1
+	fi
+
+	# If the user chooses to continue, we should run the same script
+	# from a root user.
+	# This is done by the Unistaller tool, which executes this same script.
+	if [ "$CONTINUE_UNINSTALL" == "1" ]; then
+		if [ "$IAM" != "0" ]; then
+		    `"${EPC_SUPPORT_DIR}/Uninstaller" "/bin/sh	${EPC_SUPPORT_DIR}/uninstall	--uninstall"`
+			exit 0
+		fi
+	else
+		$ECHO	" "
+		$ECHO	Aborted by user.
+		$ECHO	" "
+		exit 0
+	fi
+
+fi
+
+#=============================================================
+# Check preconditions: root user, not already installed etc.
+
+$ECHO " "
+$ECHO ' '
+$ECHO "Checking preconditions..."
+
+# Check root user
+if [ "$IAM" != "0" ]; then
+
+	echo You must be an Admin user to uninstall.
+	exit 1	
+fi
+
+#=============================================================
+
+$ECHO " "
+$ECHO "Uninstalling Endpoint Security VPN..."
+
+
+# Stop and remove the UI app
+#
+killall Endpoint_Security_VPN
+killall TrGui
+#APPLICATION_PATH should be replaced with actual 
+rm -R "/Applications/Endpoint Security VPN.app"
+rm /Library/LaunchAgents/com.checkpoint.eps.upgrader.plist
+rm /Library/LaunchAgents/com.checkpoint.eps.gui.plist
+rm /usr/local/lib/libTrAPI.dylib
+rm -R "${HOME}/Library/Logs/CheckPoint/Endpoint Connect"
+
+# Stop and remove the daemon service
+#
+#unload will stop the job, launchctl stop com.checkpoint.epc.service
+launchctl unload /Library/LaunchDaemons/com.checkpoint.epc.service.plist
+rm -R "${EPC_SUPPORT_DIR}"
+rmdir "/Library/Application Support/Checkpoint/*" "/Library/Application Support/Checkpoint"
+rm /Library/LaunchDaemons/com.checkpoint.epc.service.plist
+rm /var/log/trac.log*
+
+# Unload (if not already done) and remove firewall kext
+#
+#
+kextunload /Library/Extensions/cpfw.kext
+rm -R /Library/Extensions/cpfw.kext
+
+# Remove all collected logs in tmp
+#
+rm -R /tmp/trlogs_*
+
+# Discard all receipt data for epc
+#
+#
+pkgutil --forget com.checkpoint.pkg.epc
