@@ -18,12 +18,13 @@ NameChangeMacOS(){
 
 SupportCredentials(){
 	# Credenciales del chico de soporte
-	usrSoporte=$(osascript -e 'Tell application "System Events" to display dialog "Ingresar un Usuario de Soporte" default answer ""' -e 'text returned of result' 2>/dev/null)
-	passSoporte=$(osascript -e 'Tell application "System Events" to display dialog "Ingresar Password de Red Para '$usrSoporte'" with hidden answer default answer ""' -e 'text returned of result' 2>/dev/null)
+	#usrSoporte=$(osascript -e 'Tell application "System Events" to display dialog "Ingresar un Usuario de Soporte:" default answer ""' -e 'text returned of result' 2>/dev/null)
+	usrSoporte=$(osascript -e 'Tell application "System Events" to display dialog "Usuario de Soporte:" default answer "Nombre.Apellido" buttons {"OK"}' -e 'text returned of result' 2>/dev/null)
+	passSoporte=$(osascript -e 'Tell application "System Events" to display dialog "Password de '$usrSoporte':" with hidden answer default answer "" buttons {"OK"}' -e 'text returned of result' 2>/dev/null)
 }
 
 SetPass(){
-	currentpass=$(osascript -e 'Tell application "System Events" to display dialog "Ingresar Password De: '$varusr'" with hidden answer default answer ""' -e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
+	currentpass=$(osascript -e 'Tell application "System Events" to display dialog "Password De: '$varusr'" with hidden answer default answer "" buttons {"OK"}' -e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
 	dscl /Local/Default -authonly $varusr $currentpass
 	while [[ $? -ne 0 ]]; do
 		echo ""
@@ -31,7 +32,7 @@ SetPass(){
 		echo " Problemas con credenciales de $varusr reintenta ingresar las credenciales "
 		echo " ========================================================================= "
 		#read -n 1 -s -r -p "*** Persione cualquier tecla para continuar ***"
-		currentpass=$(osascript -e 'Tell application "System Events" to display dialog "Error!! Reingrese Contraseña de: '$varusr'" with hidden answer default answer ""' -e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
+		currentpass=$(osascript -e 'Tell application "System Events" to display dialog "Error!! Reingrese Contraseña de: '$varusr'" with hidden answer default answer "" buttons {"OK"}' -e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
 		dscl /Local/Default -authonly $varusr $currentpass
 	done
 	echo ""
@@ -106,15 +107,6 @@ Glpi(){
 	echo "     Ejecutando por primera vez FusionInventory-Agent (Espere . . . .)     "
 	echo "==========================================================================="
 	/opt/fusioninventory-agent/bin/fusioninventory-agent
-	
-	echo ""
-	echo "                      ============"
-	echo "                          LISTO"
-	echo "                      ============"
-	echo "-------------------------------------------------------"
-	echo "           fusioninventory-agent instalado"
-	echo "-------------------------------------------------------"
-	echo ""
 }
 
 ConfigVpnRegional(){
@@ -268,7 +260,7 @@ else
 	cd $TEMPDIR
 	pwd
 	echo "$DirHost" > DirHost
-	#Preparando
+	#############################################################################################
 	systemsetup -settimezone America/Argentina/Buenos_Aires
 	sntp -sS ar.infra.d
 	spctl --master-disable
@@ -279,8 +271,6 @@ else
 
 	NameChangeMacOS
 	SetPass
-	SupportCredentials
-	BindingToAD
 	CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
 	PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
 	#########################################################################################################
@@ -292,6 +282,8 @@ else
 	else
 		Vpn $CheckpointCatalina Endpoint_Security_VPN_E82-Catalina.pkg $PulseCatalina PulseSecure-Catalina.pkg
 	fi
+	SupportCredentials
+	BindingToAD
 	InstallGoogleChrome
 	FileVault
 	Glpi
@@ -299,7 +291,7 @@ else
 	echo "         =============================================== "
 	echo "           Script Completado, verificar si hay errores "
 	echo "         =============================================== "
-
+	###############################################################################################
 	cat > $TEMPDIR/aux.sh << 'EOF'
 	DirHost=$(cat DirHost)
 	PathFile=$(egrep -r 'Prepare-MacOS.sh' $DirHost | awk -F: 'FNR == 1 {print $1}')
