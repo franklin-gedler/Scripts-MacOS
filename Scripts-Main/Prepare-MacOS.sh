@@ -19,12 +19,12 @@ NameChangeMacOS(){
 SupportCredentials(){
 	# Credenciales del chico de soporte
 	#usrSoporte=$(osascript -e 'Tell application "System Events" to display dialog "Ingresar un Usuario de Soporte:" default answer ""' -e 'text returned of result' 2>/dev/null)
-	usrSoporte=$(osascript -e 'Tell application "System Events" to display dialog "Usuario de Soporte:" default answer "Nombre.Apellido" buttons {"OK"}' -e 'text returned of result' 2>/dev/null)
-	passSoporte=$(osascript -e 'Tell application "System Events" to display dialog "Password de '$usrSoporte':" with hidden answer default answer "" buttons {"OK"}' -e 'text returned of result' 2>/dev/null)
+	usrSoporte=$(osascript -e 'Tell application "System Events" to display dialog "Usuario de Soporte:" giving up after 600 default answer "Nombre.Apellido" buttons {"OK"}' -e 'text returned of result' 2>/dev/null)
+	passSoporte=$(osascript -e 'Tell application "System Events" to display dialog "Password de: '$usrSoporte'" giving up after 600 with hidden answer default answer "" buttons {"OK"}' -e 'text returned of result' 2>/dev/null)
 }
 
 SetPass(){
-	currentpass=$(osascript -e 'Tell application "System Events" to display dialog "Password De: '$varusr'" with hidden answer default answer "" buttons {"OK"}' -e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
+	currentpass=$(osascript -e 'Tell application "System Events" to display dialog "Password De: '$varusr'" giving up after 600 with hidden answer default answer "" buttons {"OK"}' -e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
 	dscl /Local/Default -authonly $varusr $currentpass
 	while [[ $? -ne 0 ]]; do
 		echo ""
@@ -32,7 +32,7 @@ SetPass(){
 		echo " Problemas con credenciales de $varusr reintenta ingresar las credenciales "
 		echo " ========================================================================= "
 		#read -n 1 -s -r -p "*** Persione cualquier tecla para continuar ***"
-		currentpass=$(osascript -e 'Tell application "System Events" to display dialog "Error!! Reingrese Contraseña de: '$varusr'" with hidden answer default answer "" buttons {"OK"}' -e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
+		currentpass=$(osascript -e 'Tell application "System Events" to display dialog "Error!! Reingrese Contraseña de: '$varusr'" giving up after 600 with hidden answer default answer "" buttons {"OK"}' -e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
 		dscl /Local/Default -authonly $varusr $currentpass
 	done
 	echo ""
@@ -262,7 +262,6 @@ else
 	echo "$DirHost" > DirHost
 	#############################################################################################
 	systemsetup -settimezone America/Argentina/Buenos_Aires
-	sntp -sS ar.infra.d
 	spctl --master-disable
 
 	#varusr=$(who > /tmp/varusr && awk 'NR < 2 {print $1}' /tmp/varusr | tr -d '[[:space:]]')
