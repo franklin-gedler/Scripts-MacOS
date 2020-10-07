@@ -45,9 +45,33 @@ SetPass(){
 	dscl . -passwd /Users/admindesp $currentpass $newpass
 }
 
+ConnectionAD(){
+	ping -c1 ar.infra.d &>/dev/null
+	while [[ $? -ne 0 ]]; do
+		echo " ========================================================================"
+		echo " Error al conectarse al Active Directory, por favor verificar!"
+		echo ""
+		echo " - Si estas desde casa, conectate a la VPN Regional"
+		echo " - Si estas en la oficina, abre otra terminal y tira un ping a ar.infra.d"
+		echo " ========================================================================"
+		echo ""
+        read -n 1 -s -r -p "*** Persione cualquier tecla para continuar ***"
+        echo ""
+        echo ""
+        ping -c1 ar.infra.d &>/dev/null
+	done
+	echo ""
+	echo " ====================================="
+	echo " Conexion con el AD OK, seguimos . . ."
+	echo " ====================================="
+	echo ""
+}
+
 BindingToAD(){
 	echo ""
+	echo " ============================="
 	echo " Enlazando al AD, Espere . . ."
+	echo " ============================="
 	echo ""
 	NameComputer=$(hostname)
 	dsconfigad -add ar.infra.d -force -computer $NameComputer --domain DC=AR,DC=INFRA,DC=D -username $usrSoporte -password $passSoporte -alldomains enable -mobile enable -mobileconfirm disable -useuncpath enable
@@ -72,6 +96,7 @@ BindingToAD(){
 	echo " El equipo $NameComputer se unio al Dominio AR correctamente "
 	echo " =========================================================== "
 	echo ""
+	dsconfigad -passInterval 0
 }
 
 Glpi(){
@@ -281,6 +306,7 @@ else
 	else
 		Vpn $CheckpointCatalina Endpoint_Security_VPN_E82-Catalina.pkg $PulseCatalina PulseSecure-Catalina.pkg
 	fi
+	ConnectionAD
 	SupportCredentials
 	BindingToAD
 	InstallGoogleChrome

@@ -21,6 +21,11 @@ sudo scutil --set ComputerName <new name>
 # comando para sacar la MacOS del AD
 sudo dsconfigad -f -r -u franklin.gedler -p Sabri-Ele-Frank1801.-.
 
+# Habilitar log de bingding al AD
+sudo odutil set log debug
+sudo log stream --debug --predicate 'subsystem == "com.apple.opendirectoryd"'
+
+
 
 nomenclatura=$(ioreg -c IOPlatformExpertDevice -d 2 | awk -F\" '/IOPlatformSerialNumber/{print $(NF-1)}')
 # pegar a dominio equipo MacOS
