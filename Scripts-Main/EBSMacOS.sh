@@ -27,6 +27,14 @@ else
 	curl -LO https://github.com/franklin-gedler-despegar/EBSMacOS/releases/download/1/Firefox.zip
 	curl -LO https://github.com/franklin-gedler-despegar/EBSMacOS/releases/download/1/Oracle.zip
 
+	# verificar si esta instalado el java y el firefox y borre
+	# PATH JAVA puede que este en /Library/Java/
+	# PATH JAVA /Users/$varusr/Library/Application\ Support/Oracle
+	# PATH firefox /Users/$varusr/Library/Application\ Support/Firefox
+	rm -rf /Library/Java
+	rm -rf /Users/$varusr/Library/Application\ Support/Oracle
+	rm -rf /Users/$varusr/Library/Application\ Support/Firefox
+
 	# ---------- Instalando Firefox --------------
 	hdiutil attach -nobrowse Firefox52.0esr.dmg 1>/dev/null
 	cp -R /Volumes/Firefox/Firefox.app /Users/$varusr/Desktop/EBS-ORACLE.app
