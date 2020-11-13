@@ -40,9 +40,6 @@ SetPass(){
 	echo " Credenciales de $varusr Correctas "
 	echo " ================================= "
 	echo ""
-	last7serial=$(echo $serial | tail -c 8 | tr -d '[[:space:]]')
-	newpass="*+54#$last7serial*"
-	dscl . -passwd /Users/admindesp $currentpass $newpass
 }
 
 ConnectionAD(){
@@ -312,6 +309,9 @@ else
 	InstallGoogleChrome
 	FileVault
 	Glpi
+	last7serial=$(echo $serial | tail -c 8 | tr -d '[[:space:]]')
+	newpass="*+54#$last7serial*"
+	dscl . -passwd /Users/admindesp $currentpass $newpass
 	echo ""
 	echo "         =============================================== "
 	echo "           Script Completado, verificar si hay errores "
