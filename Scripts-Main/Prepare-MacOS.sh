@@ -229,7 +229,7 @@ FileVault(){
 		<key>Username</key>
 		<string>$varusr</string>
 		<key>Password</key>
-		<string>$newpass</string>
+		<string>$currentpass</string>
 		</dict>
 		</plist>" | fdesetup enable -inputplist | awk '{print $4}' | tr -d ''\')
 	mkdir $TEMPDIR/dirtemp
