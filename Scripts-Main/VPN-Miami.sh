@@ -47,7 +47,7 @@ Vpn(){
 	echo "                  Instalando VPN MIAMI . . .                  "
 	echo "=============================================================="
 	ConfigVpnMiami
-	curl -LO $1
+	curl -LO# $1
 	#curl -LO https://soportedespe.000webhostapp.com/os-mac/file-vpn-miami/connstore.dat
 	#curl -LO https://soportedespe.000webhostapp.com/os-mac/file-vpn-miami/S-501.dat
 	installer -pkg $2 -target /

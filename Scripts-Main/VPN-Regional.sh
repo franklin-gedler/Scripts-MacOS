@@ -13,7 +13,7 @@ Vpn(){
 	echo "                  Instalando VPN Regional . . .               "
 	echo "=============================================================="
 	ConfigVpnRegional
-	curl -LO $1
+	curl -LO# $1
 	installer -pkg $2 -target /
 	launchctl unload /Library/LaunchDaemons/com.checkpoint.epc.service.plist
 	#newuuid=$(uuidgen)

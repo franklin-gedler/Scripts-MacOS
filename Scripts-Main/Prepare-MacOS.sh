@@ -272,9 +272,9 @@ InstallGoogleChrome(){
 
 InstallTeamViewerQS(){
 
-	echo "====================================================="
-	echo "              Instalando Team Viewer QS"
-	echo "====================================================="
+	echo " ====================================================="
+	echo "              Instalando Team Viewer QS               "
+	echo " ====================================================="
 
 	# Variables que puedes tocar
 	name="TeamViewerQSMacOS.zip"

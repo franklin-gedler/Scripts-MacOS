@@ -3,9 +3,9 @@
 
 ping -c1 glpi.despegar.it &>/dev/null
 if [[ $? -ne 0 ]] || [[ "$EUID" != 0 ]]; then
-	echo " ==================================================================="
-	echo " Este Script requiere sudo o no estas conectado a la RED de Despegar"
-	echo " ==================================================================="
+	echo " ====================================================================="
+	echo "  Este Script requiere sudo o no estas conectado a la RED de Despegar "
+	echo " ====================================================================="
 	exit 1
 else
 	DirHost=$(pwd)
@@ -22,15 +22,20 @@ else
 	#hdiutil unmount FusionInventory-Agent-2.5.2-1.dmg
 	#-----------------------------------------------------------
 
-	curl -LO https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.5.2/FusionInventory-Agent-2.5.2-1.dmg
+	echo " ============================= "
+    echo "        Downloading . . .      "
+    echo " ============================= "
+    echo ""
+
+	curl -LO# https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.5.2/FusionInventory-Agent-2.5.2-1.dmg
 	hdiutil attach FusionInventory-Agent-2.5.2-1.dmg -nobrowse 1>/dev/null
 	cp -R /Volumes/FusionInventory-Agent-2.5.2-1/FusionInventory-Agent-2.5.2-1.pkg $TEMPDIR
-	hdiutil detach /Volumes/FusionInventory-Agent-2.5.2-1/
+	hdiutil detach /Volumes/FusionInventory-Agent-2.5.2-1/ 1>/dev/null
 
 	# Instalando
-	echo "========================================"
-	echo "            Instalando . . .            "
-	echo "========================================"
+	echo " ======================================== "
+	echo "             Instalando . . .             "
+	echo " ======================================== "
 	installer -pkg FusionInventory-Agent-2.5.2-1.pkg -target / -lang en
 
 	#-------------------------------------------------------------
@@ -44,18 +49,18 @@ else
 	launchctl start org.fusioninventory.agent
 
 	echo ""
-	echo "==========================================================="
-	echo "  Ejecutando por primera vez . . . (Espere . . . .)        "
-	echo "==========================================================="
+	echo " =========================================================== "
+	echo "   Ejecutando por primera vez . . . (Espere . . . .)         "
+	echo " =========================================================== "
 	/opt/fusioninventory-agent/bin/fusioninventory-agent
 		
 	echo ""
 	echo "                      ============"
 	echo "                          LISTO"
 	echo "                      ============"
-	echo "-------------------------------------------------------"
-	echo "           fusioninventory-agent instalado"
-	echo "-------------------------------------------------------"
+	echo " -------------------------------------------------------"
+	echo "            fusioninventory-agent instalado"
+	echo " -------------------------------------------------------"
 	#########################################################################################
     cat > $TEMPDIR/aux.sh << 'EOF'
 	DirHost=$(cat DirHost)
