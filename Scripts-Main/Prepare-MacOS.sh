@@ -110,7 +110,7 @@ Glpi(){
 	echo "=============================================================="
 	echo "            Instalando FusionInventory-Agent . . .            "
 	echo "=============================================================="
-	curl -LO https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.5.2/FusionInventory-Agent-2.5.2-1.dmg
+	curl -LO# https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.5.2/FusionInventory-Agent-2.5.2-1.dmg
 	hdiutil attach FusionInventory-Agent-2.5.2-1.dmg -nobrowse 1>/dev/null
 	cp -R /Volumes/FusionInventory-Agent-2.5.2-1/FusionInventory-Agent-2.5.2-1.pkg $TEMPDIR
 	hdiutil detach /Volumes/FusionInventory-Agent-2.5.2-1/
@@ -184,7 +184,7 @@ Vpn(){
 	echo "                  Instalando VPN Regional . . .               "
 	echo "=============================================================="
 	ConfigVpnRegional
-	curl -LO $1
+	curl -LO# $1
 	installer -pkg $2 -target /
 	launchctl unload /Library/LaunchDaemons/com.checkpoint.epc.service.plist
 	#newuuid=$(uuidgen)
@@ -201,7 +201,7 @@ Vpn(){
 	echo "                  Instalando VPN MIAMI . . .                  "
 	echo "=============================================================="
 	ConfigVpnMiami
-	curl -LO $3
+	curl -LO# $3
 	#curl -LO https://soportedespe.000webhostapp.com/os-mac/file-vpn-miami/connstore.dat
 	#curl -LO https://soportedespe.000webhostapp.com/os-mac/file-vpn-miami/S-501.dat
 	installer -pkg $4 -target /
