@@ -37,6 +37,8 @@ if [[ $? -ne 0 ]] || [[ "$EUID" != 0 ]]; then
 	echo "========================================================="
 	exit 1
 else
+	systemsetup -settimezone America/Argentina/Buenos_Aires
+	spctl --master-disable
 	varusr=$(who | awk 'FNR == 1 {print $1}' | tr -d '[[:space:]]')
 	idusr=$(id -u $varusr)
 	DirHost=$(pwd)
