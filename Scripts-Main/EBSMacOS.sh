@@ -25,7 +25,8 @@ DownloadFiles(){
 
     # Download asset file.
     #echo "Downloading asset..." >&2
-    curl $CURL_ARGS -H 'Accept: application/octet-stream' "$GH_ASSET?access_token=$GITHUB_API_TOKEN"
+    #curl $CURL_ARGS -H 'Accept: application/octet-stream' "$GH_ASSET?access_token=$GITHUB_API_TOKEN"
+	curl $CURL_ARGS -H "Authorization: token $GITHUB_API_TOKEN" -H "Accept: application/octet-stream" "$GH_ASSET"
     #echo "$0 done." >&2
 }
 
