@@ -14,42 +14,43 @@ NameChangeMacOS(){
 	scutil --set HostName AR$serial
 	scutil --set LocalHostName AR$serial
 	scutil --set ComputerName AR$serial
-	NameComputer=$(hostname)
 }
 
-ValidatePassAdmindesp(){
-	currentpass=$(osascript \
-		-e 'Tell application "System Events" to display dialog "Password De: '$varusr'" giving up after 600 with hidden answer default answer "" buttons {"OK"}' \
-		-e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
+SupportCredentials(){
+	# Credenciales del chico de soporte
+	#usrSoporte=$(osascript -e 'Tell application "System Events" to display dialog "Ingresar un Usuario de Soporte:" default answer ""' -e 'text returned of result' 2>/dev/null)
+	usrSoporte=$(osascript -e 'Tell application "System Events" to display dialog "Usuario de Soporte:" giving up after 600 default answer "Nombre.Apellido" buttons {"OK"}' -e 'text returned of result' 2>/dev/null)
+	passSoporte=$(osascript -e 'Tell application "System Events" to display dialog "Password de: '$usrSoporte'" giving up after 600 with hidden answer default answer "" buttons {"OK"}' -e 'text returned of result' 2>/dev/null)
+}
+
+SetPass(){
+	currentpass=$(osascript -e 'Tell application "System Events" to display dialog "Password De: '$varusr'" giving up after 600 with hidden answer default answer "" buttons {"OK"}' -e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
 	dscl /Local/Default -authonly $varusr $currentpass
 	while [[ $? -ne 0 ]]; do
 		echo ""
 		echo " ========================================================================= "
 		echo " Problemas con credenciales de $varusr reintenta ingresar las credenciales "
 		echo " ========================================================================= "
-		echo ""
 		#read -n 1 -s -r -p "*** Persione cualquier tecla para continuar ***"
-		currentpass=$(osascript \
-			-e 'Tell application "System Events" to display dialog "Error!! Reingrese Contraseña de: '$varusr'" giving up after 600 with hidden answer default answer "" buttons {"OK"}' \
-			-e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
+		currentpass=$(osascript -e 'Tell application "System Events" to display dialog "Error!! Reingrese Contraseña de: '$varusr'" giving up after 600 with hidden answer default answer "" buttons {"OK"}' -e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
 		dscl /Local/Default -authonly $varusr $currentpass
 	done
 	echo ""
-	echo " ************************************* "
-	echo "   Credenciales de $varusr Correctas   "
-	echo " ************************************* "
+	echo " ================================= "
+	echo " Credenciales de $varusr Correctas "
+	echo " ================================= "
 	echo ""
 }
 
 ConnectionAD(){
 	ping -c1 ar.infra.d &>/dev/null
 	while [[ $? -ne 0 ]]; do
-		echo " =========================================================================="
-		echo "       Error al conectarse al Active Directory, por favor verificar!       "
+		echo " ========================================================================"
+		echo " Error al conectarse al Active Directory, por favor verificar!"
 		echo ""
-		echo "    - Si estas desde casa, conectate a la VPN Regional"
-		echo "    - Si estas en la oficina, abre otra terminal y tira un ping a ar.infra.d  "
-		echo " =========================================================================="
+		echo " - Si estas desde casa, conectate a la VPN Regional"
+		echo " - Si estas en la oficina, abre otra terminal y tira un ping a ar.infra.d"
+		echo " ========================================================================"
 		echo ""
         read -n 1 -s -r -p "*** Persione cualquier tecla para continuar ***"
         echo ""
@@ -57,93 +58,21 @@ ConnectionAD(){
         ping -c1 ar.infra.d &>/dev/null
 	done
 	echo ""
-	echo " ***************************************** "
-	echo "   Conexion con el AD OK, seguimos . . .   "
-	echo " ***************************************** "
+	echo " ====================================="
+	echo " Conexion con el AD OK, seguimos . . ."
+	echo " ====================================="
 	echo ""
-}
-
-TestCredentialsSupport(){
-    VerifyCheck=$(ldapsearch -z 0 -x -b "dc=ar,dc=infra,dc=d" \
-        -D "$usrSoporte@ar.infra.d" \
-        -h DomainDnsZones.ar.infra.d \
-        -w "$passSoporte" "userPrincipalName=$usrSoporte@ar.infra.d" | egrep "sAMAccountName=*" | cut -d' ' -f'2-')
-}
-
-InputCredentials(){
-    usrSoporte=$(osascript \
-        -e 'Tell application "System Events" to display dialog "Usuario de Soporte:" giving up after 600 default answer "Nombre.Apellido" buttons {"OK"}' \
-        -e 'text returned of result' 2>/dev/null)
-
-	passSoporte=$(osascript \
-        -e 'Tell application "System Events" to display dialog "Password de: '$usrSoporte'" giving up after 600 with hidden answer default answer "" buttons {"OK"}' \
-        -e 'text returned of result' 2>/dev/null)
-}
-
-ValidateSupportCredentials(){
-	
-    InputCredentials
-    TestCredentialsSupport
-
-    while [[ -z "$VerifyCheck" ]]; do
-        #echo "El valor de la validacion es $VerifyCheck"
-        echo ""
-		echo " ============================================================================= "
-		echo "           Credenciales Incorrectas, por favor verificar!"
-		echo ""
-		echo "  - Verifica el idioma del teclado (Recordar que el teclado varia de US y ES) "
-		echo "  - Reingresa tus Credenciales de RED"
-		echo "  - Verifica si estas conectado a la RED Despegar"
-		echo " ============================================================================= "
-        InputCredentials
-        TestCredentialsSupport
-    done
-    echo ""
-    echo " ***************************************** "
-    echo "   Credenciales de $usrSoporte Correctas   "
-    echo " ***************************************** "
-    echo ""
 }
 
 BindingToAD(){
-
-    echo ""
-    echo " ========================================================== "
-    echo "   Verificando si el equipo $NameComputer Existe en el AD   "
-    echo " ========================================================== "
-    echo ""
-    ComputerInAD=$(ldapsearch -z 0 -x -b "dc=ar,dc=infra,dc=d" \
-        -D "$usrSoporte@ar.infra.d" \
-        -h DomainDnsZones.ar.infra.d \
-        -w "$passSoporte" "cn=$NameComputer" | egrep "distinguishedName=*" | cut -d' ' -f'2-')
-    
-    if [[ -z "$ComputerInAD" ]];then
-        echo ""
-        echo " ************************************** "
-        echo "   Equipo $NameComputer NO Encontrado   "
-        echo " ************************************** "
-        echo ""
-    else
-        echo ""
-        echo " ================================================================ "
-        echo "   Equipo Encontrado en el AD se procede a Borrar, Espere . . .   "
-        echo "     $ComputerInAD "
-        echo " ================================================================ "
-        echo ""
-        ldapdelete -D "$usrSoporte@ar.infra.d" \
-            -w "$passSoporte" \
-            -h DomainDnsZones.ar.infra.d "$ComputerInAD"
-        sleep 10
-    fi
-
 	echo ""
-	echo " =================================  "
-	echo "   Enlazando al AD, Espere . . .    "
-	echo " =================================  "
+	echo " ============================="
+	echo " Enlazando al AD, Espere . . ."
+	echo " ============================="
 	echo ""
-	#NameComputer=$(hostname)
+	NameComputer=$(hostname)
 	dsconfigad -add ar.infra.d -force -computer $NameComputer --domain DC=AR,DC=INFRA,DC=D -username $usrSoporte -password $passSoporte -alldomains enable -mobile enable -mobileconfirm disable -useuncpath enable
-	
+	echo "-----------------------------------------------------------------------"
 	bindingshow=$(dsconfigad -show | grep "ar.infra.d" | awk '{print $5}' | tr -d '[[:space:]]')
 	
 	while [[ "$bindingshow" != "ar.infra.d" ]]; do
@@ -155,15 +84,14 @@ BindingToAD(){
 		echo "  - Reingresa tus Credenciales de RED"
 		echo "  - Verifica si estas conectado a la RED Despegar"
 		echo " ============================================================================= "
-		ValidateSupportCredentials
+		SupportCredentials
 		dsconfigad -add ar.infra.d -force -computer $NameComputer --domain DC=AR,DC=INFRA,DC=D -username $usrSoporte -password $passSoporte -alldomains enable -mobile enable -mobileconfirm disable -useuncpath enable
 		bindingshow=$(dsconfigad -show | grep "ar.infra.d" | awk '{print $5}' | tr -d '[[:space:]]')
 	done
 
-    echo ""
-	echo " **************************************************************** "
-	echo "   El equipo $NameComputer se unio al Dominio AR correctamente    "
-	echo " **************************************************************** "
+	echo " =========================================================== "
+	echo " El equipo $NameComputer se unio al Dominio AR correctamente "
+	echo " =========================================================== "
 	echo ""
 	dsconfigad -passInterval 0
 }
@@ -171,23 +99,21 @@ BindingToAD(){
 Glpi(){
 	ping -c1 glpi.despegar.it &>/dev/null
 	while [[ $? -ne 0 ]]; do
-		echo ""
-		echo " ********************************************************************************************* "
-		echo "   Problemas para conectar al Server Glpi, verificar si estas conectado a la RED de Despegar   "
-		echo " ********************************************************************************************* "
-		echo ""
-		read -n 1 -s -r -p "*** Persione cualquier tecla para continuar ***"
-		ping -c1 glpi.despegar.it &>/dev/null
+	echo ""
+	echo "-----------------------------------------------------------------------------------------------"
+	echo "|* Problemas para conectar al Server Glpi, verificar si estas conectado a la RED de Despegar *|"
+	echo "-----------------------------------------------------------------------------------------------"
+	read -n 1 -s -r -p "*** Persione cualquier tecla para continuar ***"
+	ping -c1 glpi.despegar.it &>/dev/null
 	done
 	echo ""
-	echo " =============================================================="
-	echo "             Instalando FusionInventory-Agent . . .            "
-	echo " =============================================================="
-	echo ""
+	echo "=============================================================="
+	echo "            Instalando FusionInventory-Agent . . .            "
+	echo "=============================================================="
 	curl -LO# https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.5.2/FusionInventory-Agent-2.5.2-1.dmg
 	hdiutil attach FusionInventory-Agent-2.5.2-1.dmg -nobrowse 1>/dev/null
 	cp -R /Volumes/FusionInventory-Agent-2.5.2-1/FusionInventory-Agent-2.5.2-1.pkg $TEMPDIR
-	hdiutil detach /Volumes/FusionInventory-Agent-2.5.2-1/ 1>/dev/null
+	hdiutil detach /Volumes/FusionInventory-Agent-2.5.2-1/
 
 	# Instalando
 	installer -pkg FusionInventory-Agent-2.5.2-1.pkg -target / -lang en
@@ -199,10 +125,9 @@ Glpi(){
 	launchctl start org.fusioninventory.agent
 
 	echo ""
-	echo " ===================================================================== "
-	echo "   Ejecutando por primera vez FusionInventory-Agent (Espere . . . .)   "
-	echo " ===================================================================== "
-	echo ""
+	echo "==========================================================================="
+	echo "     Ejecutando por primera vez FusionInventory-Agent (Espere . . . .)     "
+	echo "==========================================================================="
 	/opt/fusioninventory-agent/bin/fusioninventory-agent
 }
 
@@ -252,12 +177,12 @@ schema "version" {
 EOF
 }
 
+
 Vpn(){
 	echo ""
-	echo " =============================================================="
-	echo "                   Instalando VPN Regional . . .               "
-	echo " =============================================================="
-	echo ""
+	echo "=============================================================="
+	echo "                  Instalando VPN Regional . . .               "
+	echo "=============================================================="
 	ConfigVpnRegional
 	curl -LO# $1
 	installer -pkg $2 -target /
@@ -268,18 +193,17 @@ Vpn(){
 	cp Trac.config /Library/Application\ Support/Checkpoint/Endpoint\ Connect/
 	launchctl load /Library/LaunchDaemons/com.checkpoint.epc.service.plist
 	echo ""
-	echo " *************** "
-	echo "   Listo . . .   "
-	echo " *************** "
+	echo "Listo . . ."
 	echo ""
 	########################################################################################################
 	echo ""
-	echo " =============================================================="
-	echo "                   Instalando VPN MIAMI . . .                  "
-	echo " =============================================================="
-    echo ""
+	echo "=============================================================="
+	echo "                  Instalando VPN MIAMI . . .                  "
+	echo "=============================================================="
 	ConfigVpnMiami
 	curl -LO# $3
+	#curl -LO https://soportedespe.000webhostapp.com/os-mac/file-vpn-miami/connstore.dat
+	#curl -LO https://soportedespe.000webhostapp.com/os-mac/file-vpn-miami/S-501.dat
 	installer -pkg $4 -target /
 	varuuid=`cat /Library/Application\ Support/Pulse\ Secure/Pulse/DeviceId`
 	ive=$(uuidgen | sed "s/-//g")
@@ -290,18 +214,16 @@ Vpn(){
 	cp S-501.dat connstore.dat /Library/Application\ Support/Pulse\ Secure/Pulse/
 	launchctl load /Library/LaunchDaemons/net.pulsesecure.AccessService.plist
 	echo ""
-	echo " *************** "
-	echo "   Listo . . .   "
-	echo " *************** "
+	echo "Listo . . ."
 	echo ""
 }
 
 FileVault(){
 	echo ""
-	echo " ========================================= "
-	echo "   Habilitando la Encriptacion Del Disco   "
-	echo " ========================================= "
-	echo ""
+	#passusr=$(osascript -e 'Tell application "System Events" to display dialog "Ingresar Password De: '$varusr'" with hidden answer default answer ""' -e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
+	#curl -LO https://soportedespe.000webhostapp.com/os-mac/FileVaultOn/g 2> /tmp/null && g=$(cat g)
+	#serial=$(ioreg -c IOPlatformExpertDevice -d 2 | awk -F\" '/IOPlatformSerialNumber/{print $(NF-1)}')
+	echo "Configurando la encriptacion . . ."
 	passfilevault=$(echo "<plist>
 		<dict>
 		<key>Username</key>
@@ -317,41 +239,42 @@ FileVault(){
 	umount $TEMPDIR/dirtemp
 	estado=$(fdesetup status)
 	if [[ "$estado" = "FileVault is Off." ]]; then
-		echo " ************************** "
-		echo "   Filevault Unsuccessful   "
-		echo " ************************** "
+		echo "======================"
+		echo "Filevault Unsuccessful"
+		echo "======================"
 	else
-		echo " ***************************************************************************************************** "
-		echo "   Filevault Successfully, se comenzara la encriptacion progresivamente, no reiniar ni cerrar sesion   "
-		echo " ***************************************************************************************************** "
+		echo "==============================================================================================="
+		echo "Filevault Successfully, se comenzara la encriptacion progresivamente, no reiniar ni cerrar sesion"
+		echo "==============================================================================================="
 	fi
 	echo ""
 }
 
 InstallGoogleChrome(){
-	
 	echo ""
+	echo "====================================================="
+	echo "              Descargando Google Chrome"
+	echo "====================================================="
+	curl -LO# https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg
+	echo ""
+
 	echo "====================================================="
 	echo "              Instalando Google Chrome"
 	echo "====================================================="
-	echo ""
-	curl -LO# https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg
 	hdiutil attach googlechrome.dmg -nobrowse 1>/dev/null
 	cp -r /Volumes/Google\ Chrome/Google\ Chrome.app /Applications/
-	hdiutil detach /Volumes/Google\ Chrome/ 1>/dev/null
+	hdiutil detach /Volumes/Google\ Chrome/
 	echo ""
-	echo " *************** "
-	echo "   Listo . . .   "
-	echo " *************** "
+	echo "Listo . . ."
 	echo ""
+
 }
 
 InstallTeamViewerQS(){
-	echo ""
+
 	echo " ====================================================="
 	echo "              Instalando Team Viewer QS               "
 	echo " ====================================================="
-	echo ""
 
 	# Variables que puedes tocar
 	name="TeamViewerQSMacOS.zip"
@@ -383,20 +306,16 @@ InstallTeamViewerQS(){
 
 	cp -r TeamViewerQS.app /Applications/
 
-	echo ""
-	echo " *************** "
-	echo "   Listo . . .   "
-	echo " *************** "
-	echo ""
+	echo " ============== "
+	echo "   Listo . . .  "
+	echo " ============== "
 }
 
 ping -c1 google.com &>/dev/null
 if [[ $? -ne 0 ]] || [[ "$EUID" != 0 ]]; then
-	echo ""
-	echo " ============================================================= "
-	echo "   Este Script requiere sudo o no tienes conexion a internet   "
-	echo " ============================================================= "
-	echo ""
+	echo "========================================================="
+	echo "Este Script requiere sudo o no tienes conexion a internet"
+	echo "========================================================="
 	exit 1
 else
 	DirHost=$(pwd)
@@ -413,9 +332,9 @@ else
 	idusr=$(id -u $varusr)
 
 	NameChangeMacOS
-	ValidatePassAdmindesp
+	SetPass
 	ConnectionAD
-	ValidateSupportCredentials
+	SupportCredentials
 	BindingToAD
 	CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
 	PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
@@ -449,3 +368,4 @@ EOF
 	./aux.sh
 	exit
 fi
+
