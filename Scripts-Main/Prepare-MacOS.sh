@@ -133,7 +133,12 @@ BindingToAD(){
         ldapdelete -D "$usrSoporte@ar.infra.d" \
             -w "$passSoporte" \
             -h DomainDnsZones.ar.infra.d "$ComputerInAD"
-        sleep 10
+        sleep 15
+		echo ""
+		echo " *********** "
+		echo "   Borrado   "
+		echo " *********** "
+		echo ""
     fi
 
 	echo ""
