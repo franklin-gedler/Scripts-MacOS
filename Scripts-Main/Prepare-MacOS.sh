@@ -209,6 +209,11 @@ Glpi(){
 	echo " ===================================================================== "
 	echo ""
 	/opt/fusioninventory-agent/bin/fusioninventory-agent
+
+	echo " *************** "
+	echo "   Listo . . .   "
+	echo " *************** "
+	echo ""
 }
 
 ConfigVpnRegional(){
