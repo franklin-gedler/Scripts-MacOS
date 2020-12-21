@@ -427,6 +427,8 @@ else
 	ConnectionAD
 	ValidateSupportCredentials
 	BindingToAD
+	FileVault
+	Glpi
 	CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
 	PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
 	#########################################################################################################
@@ -439,8 +441,6 @@ else
 		Vpn $CheckpointCatalina Endpoint_Security_VPN_E82-Catalina.pkg $PulseCatalina PulseSecure-Catalina.pkg
 	fi
 	InstallGoogleChrome
-	FileVault
-	Glpi
 	InstallTeamViewerQS
 	last7serial=$(echo $serial | tail -c 8 | tr -d '[[:space:]]')
 	newpass="*+54#$last7serial*"
