@@ -73,8 +73,12 @@ else
 	# PATH JAVA /Users/$varusr/Library/Application\ Support/Oracle
 	# PATH firefox /Users/$varusr/Library/Application\ Support/Firefox
 	rm -rf /Library/Java
+	rm -fr /Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin
+	rm -fr /Library/PreferencesPanes/JavaControlPanel.prefPane
+	rm -fr ~/Library/Application\ Support/Java
 	rm -rf /Users/$varusr/Library/Application\ Support/Oracle
 	rm -rf /Users/$varusr/Library/Application\ Support/Firefox
+	rm -rf /Users/$varusr/Desktop/EBS*
 
     echo ""
     echo " ============================= "
