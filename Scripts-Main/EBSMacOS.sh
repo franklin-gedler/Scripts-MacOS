@@ -79,6 +79,9 @@ else
 	rm -rf /Users/$varusr/Library/Application\ Support/Oracle
 	rm -rf /Users/$varusr/Library/Application\ Support/Firefox
 	rm -rf /Users/$varusr/Library/Application\ Support/Mozilla
+	rm -rf /Library/Application\ Support/Oracle
+	rm -rf /Application/FireFox.app
+	rm -rf /Application/FireFox*
 	rm -rf /Users/$varusr/Desktop/EBS*
 
     echo ""
