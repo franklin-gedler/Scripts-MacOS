@@ -78,6 +78,7 @@ else
 	rm -fr ~/Library/Application\ Support/Java
 	rm -rf /Users/$varusr/Library/Application\ Support/Oracle
 	rm -rf /Users/$varusr/Library/Application\ Support/Firefox
+	rm -rf /Users/$varusr/Library/Application\ Support/Mozilla
 	rm -rf /Users/$varusr/Desktop/EBS*
 
     echo ""
