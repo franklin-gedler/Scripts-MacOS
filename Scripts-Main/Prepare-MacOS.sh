@@ -446,7 +446,7 @@ else
 
 	else
 		# No es intel
-		/usr/sbin/softwareupdate –install-rosetta –agree-to-license
+		/usr/sbin/softwareupdate --install-rosetta --agree-to-license
 		Glpi
 		CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
 		PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
