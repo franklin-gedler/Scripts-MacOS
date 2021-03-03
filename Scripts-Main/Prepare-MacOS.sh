@@ -426,8 +426,8 @@ else
 	ValidatePassAdmindesp
 	ConnectionAD
 	ValidateSupportCredentials
-	BindingToAD
 	FileVault
+	BindingToAD
 	chip=$(system_profiler SPHardwareDataType | egrep -i "intel")
 	if [[ "$chip" ]]; then
 		# Es intel
