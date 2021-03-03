@@ -428,18 +428,39 @@ else
 	ValidateSupportCredentials
 	BindingToAD
 	FileVault
-	Glpi
-	CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
-	PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
-	#########################################################################################################
-	CheckpointMojave="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E80.71-Mojave.pkg"
-	PulseMojave="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Mojave.pkg"
-	MacVersion=$(sw_vers -productVersion | awk -F '.' '{print $1 "." $2}')
-	if [[ "$MacVersion" = "10.14" ]]; then
-		Vpn $CheckpointMojave Endpoint_Security_VPN_E80.71-Mojave.pkg $PulseMojave PulseSecure-Mojave.pkg
+	chip=$(system_profiler SPHardwareDataType | egrep -i "intel")
+	if [[ "$chip" ]]; then
+		# Es intel
+		Glpi
+		CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
+		PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
+		#########################################################################################################
+		CheckpointMojave="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E80.71-Mojave.pkg"
+		PulseMojave="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Mojave.pkg"
+		MacVersion=$(sw_vers -productVersion | awk -F '.' '{print $1 "." $2}')
+		if [[ "$MacVersion" = "10.14" ]]; then
+			Vpn $CheckpointMojave Endpoint_Security_VPN_E80.71-Mojave.pkg $PulseMojave PulseSecure-Mojave.pkg
+		else
+			Vpn $CheckpointCatalina Endpoint_Security_VPN_E82-Catalina.pkg $PulseCatalina PulseSecure-Catalina.pkg
+		fi
+
 	else
-		Vpn $CheckpointCatalina Endpoint_Security_VPN_E82-Catalina.pkg $PulseCatalina PulseSecure-Catalina.pkg
+		# No es intel
+		/usr/sbin/softwareupdate –install-rosetta –agree-to-license
+		Glpi
+		CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
+		PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
+		#########################################################################################################
+		CheckpointMojave="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E80.71-Mojave.pkg"
+		PulseMojave="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Mojave.pkg"
+		MacVersion=$(sw_vers -productVersion | awk -F '.' '{print $1 "." $2}')
+		if [[ "$MacVersion" = "10.14" ]]; then
+			Vpn $CheckpointMojave Endpoint_Security_VPN_E80.71-Mojave.pkg $PulseMojave PulseSecure-Mojave.pkg
+		else
+			Vpn $CheckpointCatalina Endpoint_Security_VPN_E82-Catalina.pkg $PulseCatalina PulseSecure-Catalina.pkg
+		fi
 	fi
+
 	InstallGoogleChrome
 	InstallTeamViewerQS
 	last7serial=$(echo $serial | tail -c 8 | tr -d '[[:space:]]')
