@@ -417,17 +417,19 @@ else
 	#############################################################################################
 	systemsetup -settimezone America/Argentina/Buenos_Aires
 	spctl --master-disable
-
+	
 	#varusr=$(who > /tmp/varusr && awk 'NR < 2 {print $1}' /tmp/varusr | tr -d '[[:space:]]')
 	varusr=$(who | awk 'FNR == 1 {print $1}' | tr -d '[[:space:]]')
 	idusr=$(id -u $varusr)
 
+	<<-!
 	NameChangeMacOS
 	ValidatePassAdmindesp
 	ConnectionAD
 	ValidateSupportCredentials
 	FileVault
 	BindingToAD
+	!
 	chip=$(system_profiler SPHardwareDataType | egrep -i "intel")
 	if [[ "$chip" ]]; then
 		# Es intel
@@ -463,9 +465,11 @@ else
 
 	InstallGoogleChrome
 	InstallTeamViewerQS
+	<<-!
 	last7serial=$(echo $serial | tail -c 8 | tr -d '[[:space:]]')
 	newpass="*+54#$last7serial*"
 	dscl . -passwd /Users/admindesp $currentpass $newpass
+	!
 	echo ""
 	echo "         =============================================== "
 	echo "           Script Completado, verificar si hay errores "
