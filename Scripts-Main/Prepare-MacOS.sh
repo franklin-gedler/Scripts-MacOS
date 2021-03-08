@@ -457,10 +457,11 @@ else
 	BindingToAD
 	#!
 
-	#chip=$(system_profiler SPHardwareDataType | egrep -i "intel")
-	chip=$(/usr/sbin/sysctl -n machdep.cpu.brand_string | grep -io "Intel")
+	chip=$(system_profiler SPHardwareDataType | egrep -i "intel")
+	#chip=$(/usr/sbin/sysctl -n machdep.cpu.brand_string | grep -io "Intel")
 	if [[ "$chip" ]]; then
 		# Es intel
+		echo " *** Es intel ***"
 		Glpi
 		CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
 		PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
@@ -476,6 +477,7 @@ else
 
 	else
 		# No es intel
+		echo " *** Es Apple M1 ***"
 		InstallRosetta
 		Glpi
 		CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
