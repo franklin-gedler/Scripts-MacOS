@@ -400,6 +400,32 @@ InstallTeamViewerQS(){
 	echo ""
 }
 
+InstallRosetta(){
+
+	echo ""
+	echo " =============================================="
+	echo "              Instalando Rosetta               "
+	echo " =============================================="
+	echo ""
+
+	processrosetta=$(/usr/sbin/softwareupdate --install-rosetta --agree-to-license)
+
+	veryrosettafailed=$(echo $processrosetta | egrep -io 'Install failed with error: An error has occurred. please try again later.')
+	
+	#veryrosettasuccessful=$(echo $processrosetta | egrep -io 'Install of Rosetta 2 finished successfully')
+
+	while [[ ! -z $veryrosettafailed ]]; do
+		processrosetta=$(/usr/sbin/softwareupdate --install-rosetta --agree-to-license)
+		veryrosettafailed=$(echo $processrosetta | egrep -io 'Install failed with error: An error has occurred. please try again later.')
+	done
+
+	echo ""
+	echo " *************** "
+	echo "   Listo . . .   "
+	echo " *************** "
+	echo ""
+}
+
 ping -c1 google.com &>/dev/null
 if [[ $? -ne 0 ]] || [[ "$EUID" != 0 ]]; then
 	echo ""
@@ -430,7 +456,9 @@ else
 	FileVault
 	BindingToAD
 	#!
-	chip=$(system_profiler SPHardwareDataType | egrep -i "intel")
+
+	#chip=$(system_profiler SPHardwareDataType | egrep -i "intel")
+	chip=$(/usr/sbin/sysctl -n machdep.cpu.brand_string | grep -io "Intel")
 	if [[ "$chip" ]]; then
 		# Es intel
 		Glpi
@@ -448,15 +476,7 @@ else
 
 	else
 		# No es intel
-		fallarosetta='Install failed with error: An error has ocurred. please try again later'
-		processrosetta=$(/usr/sbin/softwareupdate --install-rosetta --agree-to-license)
-		veryrosetta=$(echo $processrosetta | egrep -io 'Install failed with error: An error has ocurred. please try again later')
-
-		while [[ $veryrosetta = $fallarosetta ]]; do
-			processrosetta=$(/usr/sbin/softwareupdate --install-rosetta --agree-to-license)
-			veryrosetta=$(echo $processrosetta | egrep -io 'Install failed with error: An error has ocurred. please try again later')
-		done
-
+		
 		Glpi
 		CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
 		PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
