@@ -42,7 +42,7 @@ ValidatePassAdmindesp(){
 }
 
 ConnectionAD(){
-	ping -c1 ar.infra.d &>/dev/null
+	ping -c1 10.40.54.52 &>/dev/null
 	while [[ $? -ne 0 ]]; do
 		echo " =========================================================================="
 		echo "       Error al conectarse al Active Directory, por favor verificar!       "
@@ -456,7 +456,7 @@ else
 			processrosetta=$(/usr/sbin/softwareupdate --install-rosetta --agree-to-license)
 			veryrosetta=$(echo $processrosetta | egrep -io 'Install failed with error: An error has ocurred. please try again later')
 		done
-		
+
 		Glpi
 		CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
 		PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
