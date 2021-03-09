@@ -42,7 +42,7 @@ ValidatePassAdmindesp(){
 }
 
 ConnectionAD(){
-	ping -c1 10.40.54.52 &>/dev/null
+	ping -c1 10.40.54.1 &>/dev/null
 	while [[ $? -ne 0 ]]; do
 		echo " =========================================================================="
 		echo "       Error al conectarse al Active Directory, por favor verificar!       "
@@ -66,7 +66,7 @@ ConnectionAD(){
 TestCredentialsSupport(){
     VerifyCheck=$(ldapsearch -z 0 -x -b "dc=ar,dc=infra,dc=d" \
         -D "$usrSoporte@ar.infra.d" \
-        -h DomainDnsZones.ar.infra.d \
+        -h 10.40.54.1 \
         -w "$passSoporte" "userPrincipalName=$usrSoporte@ar.infra.d" | egrep "sAMAccountName=*" | cut -d' ' -f'2-')
 }
 
@@ -114,7 +114,7 @@ BindingToAD(){
     echo ""
     ComputerInAD=$(ldapsearch -z 0 -x -b "dc=ar,dc=infra,dc=d" \
         -D "$usrSoporte@ar.infra.d" \
-        -h DomainDnsZones.ar.infra.d \
+        -h 10.40.54.1 \
         -w "$passSoporte" "cn=$NameComputer" | egrep "distinguishedName=*" | cut -d' ' -f'2-')
     
     if [[ -z "$ComputerInAD" ]];then
@@ -132,7 +132,7 @@ BindingToAD(){
         echo ""
         ldapdelete -D "$usrSoporte@ar.infra.d" \
             -w "$passSoporte" \
-            -h DomainDnsZones.ar.infra.d "$ComputerInAD"
+            -h 10.40.54.1 "$ComputerInAD"
         sleep 15
 		echo ""
 		echo " *********** "
