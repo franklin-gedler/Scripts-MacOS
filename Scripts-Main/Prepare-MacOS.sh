@@ -306,6 +306,24 @@ Vpn(){
 	echo ""
 }
 
+ConvertCredentialsNAS(){
+
+    usrNAS=$usrSoporte
+    passNAS=$passSoporte
+
+    # arrays
+    declare -a Characters=('\@' '\!' '\-' '\.' '\$' '\#' '\*' '\:' '\_')
+	declare -a CharactersConvert=('%40' '%21' '%2D' '%2E' '%24' '%23' '%2A' '%3A' '%5F')
+
+    for i in "${!Characters[@]}"; do
+
+        # Nota: echo ${VARIABLE//Cadena a buscar/Cadena que reemplaza}
+        usrNAS=${usrNAS//${Characters[$i]}/${CharactersConvert[$i]}}
+        passNAS=${passNAS//${Characters[$i]}/${CharactersConvert[$i]}}
+
+    done
+}
+
 FileVault(){
 	echo ""
 	echo " ========================================= "
@@ -320,11 +338,17 @@ FileVault(){
 		<string>$currentpass</string>
 		</dict>
 		</plist>" | fdesetup enable -inputplist | awk '{print $4}' | tr -d ''\')
-	mkdir $TEMPDIR/dirtemp
-	mount_smbfs "//AR.INFRA.D;$usrSoporte:$passSoporte@10.40.54.52/soporte" $TEMPDIR/dirtemp
-	echo "$serial ; $passfilevault" >> $TEMPDIR/dirtemp/Encryption-MacOS.txt
-	echo "$serial ; $passfilevault" > /Users/admindesp/Desktop/$serial.txt
-	umount $TEMPDIR/dirtemp
+
+	mkdir $TEMPDIR/folderNAS
+	ConvertCredentialsNAS
+
+	mount_smbfs "//AR.INFRA.D;$usrNAS:$passNAS@10.40.54.52/soporte" $TEMPDIR/folderNAS
+	touch $TEMPDIR/folderNAS/FileVaultMacOS/$serial.txt
+	echo "$serial ; $passfilevault" > $TEMPDIR/folderNAS/FileVaultMacOS/$serial.txt
+	echo "$serial ; $passfilevault" > /Users/$varusr/Desktop/$serial.txt
+
+	diskutil unmount folderNAS &>/dev/null
+
 	estado=$(fdesetup status)
 	if [[ "$estado" = "FileVault is Off." ]]; then
 		echo " ************************** "
