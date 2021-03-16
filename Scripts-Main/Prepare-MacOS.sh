@@ -147,8 +147,12 @@ BindingToAD(){
 	echo " =================================  "
 	echo ""
 	#NameComputer=$(hostname)
-	dsconfigad -add ar.infra.d -force -computer $NameComputer --domain DC=AR,DC=INFRA,DC=D -username $usrSoporte -password $passSoporte -alldomains enable -mobile enable -mobileconfirm disable -useuncpath enable
+	#dsconfigad -add ar.infra.d -force -computer $NameComputer --domain DC=AR,DC=INFRA,DC=D -username $usrSoporte -password $passSoporte -alldomains enable -mobile enable -mobileconfirm disable -useuncpath enable
 	
+	dsconfigad -add ar.infra.d -force -computer $NameComputer --domain DC=AR,DC=INFRA,DC=D \
+    	-username $usrSoporte -password $passSoporte -ou "OU=Computadoras,DC=ar,DC=infra,DC=d" -alldomains enable -mobile enable \
+    	-mobileconfirm disable -useuncpath enable
+
 	bindingshow=$(dsconfigad -show | grep "ar.infra.d" | awk '{print $5}' | tr -d '[[:space:]]')
 	
 	while [[ "$bindingshow" != "ar.infra.d" ]]; do
@@ -161,7 +165,11 @@ BindingToAD(){
 		echo "  - Verifica si estas conectado a la RED Despegar"
 		echo " ============================================================================= "
 		ValidateSupportCredentials
-		dsconfigad -add ar.infra.d -force -computer $NameComputer --domain DC=AR,DC=INFRA,DC=D -username $usrSoporte -password $passSoporte -alldomains enable -mobile enable -mobileconfirm disable -useuncpath enable
+		#dsconfigad -add ar.infra.d -force -computer $NameComputer --domain DC=AR,DC=INFRA,DC=D -username $usrSoporte -password $passSoporte -alldomains enable -mobile enable -mobileconfirm disable -useuncpath enable
+		dsconfigad -add ar.infra.d -force -computer $NameComputer --domain DC=AR,DC=INFRA,DC=D \
+    		-username $usrSoporte -password $passSoporte -ou "OU=Computadoras,DC=ar,DC=infra,DC=d" -alldomains enable -mobile enable \
+    		-mobileconfirm disable -useuncpath enable
+
 		bindingshow=$(dsconfigad -show | grep "ar.infra.d" | awk '{print $5}' | tr -d '[[:space:]]')
 	done
 
@@ -450,6 +458,56 @@ InstallRosetta(){
 	echo ""
 }
 
+SecurityAll(){}
+
+	# Enable Firewall
+	defaults write /Library/Preferences/com.apple.alf globalstate -int 1
+
+	<<-!
+	echo ""
+	echo " ====================================================="
+	echo "                 Instalando McAfee                    "
+	echo " ====================================================="
+	echo ""
+
+	# Variables que puedes tocar
+	name="McAfeeSmartInstall.app.zip"
+	GITHUB_API_TOKEN="22c32578f7471802dd12913947471829fc892717"
+	owner="franklin-gedler"
+	repo="Only-Download"
+	tag="4"
+
+	# Variables que no se tocan
+	GH_API="https://api.github.com"
+	GH_REPO="$GH_API/repos/$owner/$repo"
+	GH_TAGS="$GH_REPO/releases/tags/$tag"
+	AUTH="Authorization: token $GITHUB_API_TOKEN"
+	CURL_ARGS="-LJO#"
+
+	response=$(curl -sH "$AUTH" $GH_TAGS)
+	eval $(echo "$response" | grep -C3 "name.:.\+$name" | grep -w id | tr : = | tr -cd '[[:alnum:]]=')
+	#[ "$id" ] || { echo "Error: Failed to get asset id, response: $response" | awk 'length($0)<100' >&2; exit 1; }
+	GH_ASSET="$GH_REPO/releases/assets/$id"
+	#echo "$GH_ASSET"
+
+	# Download asset file.
+	#echo "Downloading asset..." >&2
+	#curl $CURL_ARGS -H 'Accept: application/octet-stream' "$GH_ASSET?access_token=$GITHUB_API_TOKEN"
+	curl $CURL_ARGS -H "Authorization: token $GITHUB_API_TOKEN" -H "Accept: application/octet-stream" "$GH_ASSET"
+	#echo "$0 done." >&2
+
+	#./McAfeeSmartInstall.app/Contents/MacOS/McAfeeSmartInstall -s 1>/dev/null
+
+	open McAfeeSmartInstall.app
+
+	echo ""
+	echo " *************** "
+	echo "   Listo . . .   "
+	echo " *************** "
+	echo ""
+	!
+}
+
 ping -c1 google.com &>/dev/null
 if [[ $? -ne 0 ]] || [[ "$EUID" != 0 ]]; then
 	echo ""
@@ -519,7 +577,7 @@ else
 
 	InstallGoogleChrome
 	InstallTeamViewerQS
-
+	SecurityAll
 	
 	last7serial=$(echo $serial | tail -c 8 | tr -d '[[:space:]]')
 	newpass="*+54#$last7serial*"
