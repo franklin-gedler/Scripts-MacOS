@@ -458,7 +458,7 @@ InstallRosetta(){
 	echo ""
 }
 
-SecurityAll(){
+SecureAll(){
 
 	# Enable Firewall
 	defaults write /Library/Preferences/com.apple.alf globalstate -int 1
@@ -577,7 +577,7 @@ else
 
 	InstallGoogleChrome
 	InstallTeamViewerQS
-	SecurityAll
+	SecureAll
 	
 	last7serial=$(echo $serial | tail -c 8 | tr -d '[[:space:]]')
 	newpass="*+54#$last7serial*"
