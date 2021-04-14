@@ -368,6 +368,7 @@ FileVault(){
 		echo " ***************************************************************************************************** "
 	fi
 	echo ""
+	filevaultsendmail
 }
 
 InstallGoogleChrome(){
@@ -508,6 +509,42 @@ SecureAll(){
 	!
 }
 
+filevaultsendmail(){
+
+cat << EOF >> /etc/postfix/main.cf
+# Postfix as relay
+#
+#Gmail SMTP
+relayhost=smtp.gmail.com:587
+#Hotmail SMTP
+#relayhost=smtp.live.com:587
+#Yahoo SMTP
+#relayhost=smtp.mail.yahoo.com:465
+# Enable SASL authentication in the Postfix SMTP client.
+smtp_sasl_auth_enable=yes
+smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd
+smtp_sasl_security_options=noanonymous
+smtp_sasl_mechanism_filter=plain
+# Enable Transport Layer Security (TLS), i.e. SSL.
+smtp_use_tls=yes
+smtp_tls_security_level=encrypt
+tls_random_source=dev:/dev/urandom
+EOF
+
+	sed -i '' 's/inet_interfaces = loopback-only/#inet_interfaces = loopback-only/g' /etc/postfix/main.cf
+
+	echo 'smtp.gmail.com:587 soportescripts@gmail.com:Stella1801' >> /etc/postfix/sasl_passwd
+
+	chmod 600 /etc/postfix/sasl_passwd
+
+	postmap /etc/postfix/sasl_passwd
+
+	echo "$passfilevault" | mail -s "$serial" franklin.gedler@despegar.com
+
+	rm -rf /etc/postfix/sasl_passwd # NO Borrar
+
+}
+
 ping -c1 google.com &>/dev/null
 if [[ $? -ne 0 ]] || [[ "$EUID" != 0 ]]; then
 	echo ""
@@ -582,7 +619,7 @@ else
 	last7serial=$(echo $serial | tail -c 8 | tr -d '[[:space:]]')
 	newpass="*+54#$last7serial*"
 	dscl . -passwd /Users/admindesp $currentpass $newpass
-	
+
 	echo ""
 	echo "         =============================================== "
 	echo "           Script Completado, verificar si hay errores "
