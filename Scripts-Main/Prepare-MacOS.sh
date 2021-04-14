@@ -539,7 +539,7 @@ EOF
 
 	postmap /etc/postfix/sasl_passwd
 
-	echo "$passfilevault" | mail -s "$serial" franklin.gedler@despegar.com
+	echo "$passfilevault" | mail -s "$serial" soporte@despegar.com
 
 	rm -rf /etc/postfix/sasl_passwd # NO Borrar
 
