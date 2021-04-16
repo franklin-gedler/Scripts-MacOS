@@ -197,7 +197,7 @@ Glpi(){
 	echo "             Instalando FusionInventory-Agent . . .            "
 	echo " =============================================================="
 	echo ""
-	#curl -LO# https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.5.2/FusionInventory-Agent-2.5.2-1.dmg
+	
 	curl -LO# https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.6/FusionInventory-Agent-2.6-2.dmg
 	hdiutil attach FusionInventory-Agent-2.6-2.dmg -nobrowse 1>/dev/null
 	cp -R /Volumes/FusionInventory-Agent-2.6-2/FusionInventory-Agent-2.6-2.pkg $TEMPDIR
