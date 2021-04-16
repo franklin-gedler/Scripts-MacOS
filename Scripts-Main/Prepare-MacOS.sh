@@ -197,13 +197,14 @@ Glpi(){
 	echo "             Instalando FusionInventory-Agent . . .            "
 	echo " =============================================================="
 	echo ""
-	curl -LO# https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.5.2/FusionInventory-Agent-2.5.2-1.dmg
-	hdiutil attach FusionInventory-Agent-2.5.2-1.dmg -nobrowse 1>/dev/null
-	cp -R /Volumes/FusionInventory-Agent-2.5.2-1/FusionInventory-Agent-2.5.2-1.pkg $TEMPDIR
-	hdiutil detach /Volumes/FusionInventory-Agent-2.5.2-1/ 1>/dev/null
+	#curl -LO# https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.5.2/FusionInventory-Agent-2.5.2-1.dmg
+	curl -LO# https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.6/FusionInventory-Agent-2.6-2.dmg
+	hdiutil attach FusionInventory-Agent-2.6-2.dmg -nobrowse 1>/dev/null
+	cp -R /Volumes/FusionInventory-Agent-2.6-2/FusionInventory-Agent-2.6-2.pkg $TEMPDIR
+	hdiutil detach /Volumes/FusionInventory-Agent-2.6-2/ 1>/dev/null
 
 	# Instalando
-	installer -pkg FusionInventory-Agent-2.5.2-1.pkg -target / -lang en
+	installer -pkg FusionInventory-Agent-2.6-2.pkg -target / -lang en
 
 	# Config.
 	Sv1="\#server \= http\:\/\/server.domain.com\/glpi\/plugins\/fusioninventory\/"
