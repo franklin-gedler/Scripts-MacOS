@@ -532,9 +532,18 @@ smtp_tls_security_level=encrypt
 tls_random_source=dev:/dev/urandom
 EOF
 
+	key='U29wb3J0ZV9EYWphcmFfZGVfaGFjZXJfU2NyaXB0c19TZWd1bl9Mb3NfSmVmZXNfU29wb3J0ZV9OT19EZXNhcnJvbGxhCg=='
+    key=$(echo $key | base64 --decode)
+
+    email='U2FsdGVkX1/lgH3Zdtkq0mPvDCV5IzlDjiU1+Q+sD2OQ72DYS0I/0BbVfyLhEfyP'
+    email=$(echo $email | openssl enc -base64 -d -aes-256-cbc -pass pass:$key)
+
+    pass='U2FsdGVkX1/sxc2QwVel+MUlKCRAJXjNpC287KK3lqc='
+    pass=$(echo $pass | openssl enc -base64 -d -aes-256-cbc -pass pass:$key)
+
 	sed -i '' 's/inet_interfaces = loopback-only/#inet_interfaces = loopback-only/g' /etc/postfix/main.cf
 
-	echo 'smtp.gmail.com:587 soportescripts@gmail.com:Stella1801' >> /etc/postfix/sasl_passwd
+	echo "smtp.gmail.com:587 $email:$pass" >> /etc/postfix/sasl_passwd
 
 	chmod 600 /etc/postfix/sasl_passwd
 
