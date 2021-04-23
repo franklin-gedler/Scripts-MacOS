@@ -629,7 +629,7 @@ else
 	
 	last7serial=$(echo $serial | tail -c 8 | tr -d '[[:space:]]')
 	newpass="*+54#$last7serial*"
-	dscl . -passwd /Users/admindesp $currentpass $newpass
+	dscl . -passwd /Users/$varusr $currentpass $newpass
 
 	echo ""
 	echo "         =============================================== "
