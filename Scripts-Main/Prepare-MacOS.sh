@@ -571,7 +571,7 @@ else
 	echo "$DirHost" > DirHost
 	#############################################################################################
 	systemsetup -settimezone America/Argentina/Buenos_Aires
-	sntp -sS time.apple.com
+	sntp -sS ar.infra.d
 	spctl --master-disable
 	
 	#varusr=$(who > /tmp/varusr && awk 'NR < 2 {print $1}' /tmp/varusr | tr -d '[[:space:]]')
