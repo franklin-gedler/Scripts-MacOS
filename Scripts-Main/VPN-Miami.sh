@@ -64,6 +64,43 @@ Vpn(){
 	echo ""
 }
 
+InstallRosetta(){
+
+	echo ""
+	echo " =============================================="
+	echo "              Instalando Rosetta               "
+	echo " =============================================="
+	echo ""
+
+	processrosetta=$(/usr/sbin/softwareupdate --install-rosetta --agree-to-license)
+
+	veryrosettafailed=$(echo $processrosetta | egrep -io 'Install failed with error: An error has occurred. please try again later.')
+	
+	#veryrosettasuccessful=$(echo $processrosetta | egrep -io 'Install of Rosetta 2 finished successfully')
+
+	while [[ ! -z $veryrosettafailed ]]; do
+		processrosetta=$(/usr/sbin/softwareupdate --install-rosetta --agree-to-license)
+		veryrosettafailed=$(echo $processrosetta | egrep -io 'Install failed with error: An error has occurred. please try again later.')
+	done
+
+	echo ""
+	echo " *************** "
+	echo "   Listo . . .   "
+	echo " *************** "
+	echo ""
+}
+
+Install(){
+	PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
+    PulseMojave="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Mojave.pkg"
+    MacVersion=$(sw_vers -productVersion | awk -F '.' '{print $1 "." $2}')
+    if [[ "$MacVersion" = "10.14" ]]; then
+		Vpn $PulseMojave PulseSecure-Mojave.pkg
+	else
+		Vpn $PulseCatalina PulseSecure-Catalina.pkg
+	fi
+}
+
 ping -c1 google.com &>/dev/null
 if [[ $? -ne 0 ]] || [[ "$EUID" != 0 ]]; then
 	echo "========================================================="
@@ -79,14 +116,19 @@ else
     #########################################################################################
     systemsetup -settimezone America/Argentina/Buenos_Aires
 	spctl --master-disable
-    PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
-    PulseMojave="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Mojave.pkg"
-    MacVersion=$(sw_vers -productVersion | awk -F '.' '{print $1 "." $2}')
-    if [[ "$MacVersion" = "10.14" ]]; then
-		Vpn $PulseMojave PulseSecure-Mojave.pkg
+    
+	chip=$(system_profiler SPHardwareDataType | egrep -i "intel")
+	if [[ "$chip" ]]; then
+		# Es intel
+		echo " *** Es intel ***"
+		Install
 	else
-		Vpn $PulseCatalina PulseSecure-Catalina.pkg
+		# No es intel
+		echo " *** Es Apple M1 ***"
+		InstallRosetta
+		Install
 	fi
+
     #########################################################################################
     cat > $TEMPDIR/aux.sh << 'EOF'
 	DirHost=$(cat DirHost)
