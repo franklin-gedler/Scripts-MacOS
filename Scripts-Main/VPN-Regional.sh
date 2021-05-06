@@ -26,6 +26,42 @@ Vpn(){
 	echo ""
 }
 
+Install(){
+	CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
+    CheckpointMojave="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E80.71-Mojave.pkg"
+    MacVersion=$(sw_vers -productVersion | awk -F '.' '{print $1 "." $2}')
+	if [[ "$MacVersion" = "10.14" ]]; then
+		Vpn $CheckpointMojave Endpoint_Security_VPN_E80.71-Mojave.pkg
+	else
+		Vpn $CheckpointCatalina Endpoint_Security_VPN_E82-Catalina.pkg
+	fi
+}
+
+InstallRosetta(){
+
+	echo ""
+	echo " =============================================="
+	echo "              Instalando Rosetta               "
+	echo " =============================================="
+	echo ""
+
+	processrosetta=$(/usr/sbin/softwareupdate --install-rosetta --agree-to-license)
+
+	veryrosettafailed=$(echo $processrosetta | egrep -io 'Install failed with error: An error has occurred. please try again later.')
+	
+	#veryrosettasuccessful=$(echo $processrosetta | egrep -io 'Install of Rosetta 2 finished successfully')
+
+	while [[ ! -z $veryrosettafailed ]]; do
+		processrosetta=$(/usr/sbin/softwareupdate --install-rosetta --agree-to-license)
+		veryrosettafailed=$(echo $processrosetta | egrep -io 'Install failed with error: An error has occurred. please try again later.')
+	done
+
+	echo ""
+	echo " *************** "
+	echo "   Listo . . .   "
+	echo " *************** "
+	echo ""
+}
 
 ping -c1 google.com &>/dev/null
 if [[ $? -ne 0 ]] || [[ "$EUID" != 0 ]]; then
@@ -42,13 +78,17 @@ else
     #########################################################################################
 	systemsetup -settimezone America/Argentina/Buenos_Aires
 	spctl --master-disable
-    CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
-    CheckpointMojave="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E80.71-Mojave.pkg"
-    MacVersion=$(sw_vers -productVersion | awk -F '.' '{print $1 "." $2}')
-	if [[ "$MacVersion" = "10.14" ]]; then
-		Vpn $CheckpointMojave Endpoint_Security_VPN_E80.71-Mojave.pkg
+    
+	chip=$(system_profiler SPHardwareDataType | egrep -i "intel")
+	if [[ "$chip" ]]; then
+		# Es intel
+		echo " *** Es intel ***"
+		Install
 	else
-		Vpn $CheckpointCatalina Endpoint_Security_VPN_E82-Catalina.pkg
+		# No es intel
+		echo " *** Es Apple M1 ***"
+		InstallRosetta
+		Install
 	fi
     #########################################################################################
     cat > $TEMPDIR/aux.sh << 'EOF'
