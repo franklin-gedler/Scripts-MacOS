@@ -1,22 +1,33 @@
 #!/bin/bash
 #GlpiNoBorrar
 
-ping -c1 glpi.despegar.it &>/dev/null
-if [[ $? -ne 0 ]] || [[ "$EUID" != 0 ]]; then
-	echo " ====================================================================="
-	echo "  Este Script requiere sudo o no estas conectado a la RED de Despegar "
-	echo " ====================================================================="
-	exit 1
-else
-	DirHost=$(pwd)
-	TEMPDIR=`mktemp -d`
-	cd $TEMPDIR
-	pwd
-	echo "$DirHost" > DirHost
-	################################################################################################
-	systemsetup -settimezone America/Argentina/Buenos_Aires
-	spctl --master-disable
+InstallRosetta(){
 
+	echo ""
+	echo " =============================================="
+	echo "              Instalando Rosetta               "
+	echo " =============================================="
+	echo ""
+
+	processrosetta=$(/usr/sbin/softwareupdate --install-rosetta --agree-to-license)
+
+	veryrosettafailed=$(echo $processrosetta | egrep -io 'Install failed with error: An error has occurred. please try again later.')
+	
+	#veryrosettasuccessful=$(echo $processrosetta | egrep -io 'Install of Rosetta 2 finished successfully')
+
+	while [[ ! -z $veryrosettafailed ]]; do
+		processrosetta=$(/usr/sbin/softwareupdate --install-rosetta --agree-to-license)
+		veryrosettafailed=$(echo $processrosetta | egrep -io 'Install failed with error: An error has occurred. please try again later.')
+	done
+
+	echo ""
+	echo " *************** "
+	echo "   Listo . . .   "
+	echo " *************** "
+	echo ""
+}
+
+Downloadfusion(){
 	#otra forma de montar --------------------------------------
 	#hdiutil mount FusionInventory-Agent-2.5.2-1.dmg -nobrowse
 	#hdiutil unmount FusionInventory-Agent-2.5.2-1.dmg
@@ -36,7 +47,10 @@ else
 	#hdiutil attach FusionInventory-Agent-2.5.2-1.dmg -nobrowse 1>/dev/null
 	#cp -R /Volumes/FusionInventory-Agent-2.5.2-1/FusionInventory-Agent-2.5.2-1.pkg $TEMPDIR
 	#hdiutil detach /Volumes/FusionInventory-Agent-2.5.2-1/ 1>/dev/null
+}
 
+Installfusion(){
+	Downloadfusion
 	# Instalando
 	echo " ======================================== "
 	echo "             Instalando . . .             "
@@ -68,6 +82,36 @@ else
 	echo " -------------------------------------------------------"
 	echo "            fusioninventory-agent instalado"
 	echo " -------------------------------------------------------"
+}
+
+ping -c1 glpi.despegar.it &>/dev/null
+if [[ $? -ne 0 ]] || [[ "$EUID" != 0 ]]; then
+	echo " ====================================================================="
+	echo "  Este Script requiere sudo o no estas conectado a la RED de Despegar "
+	echo " ====================================================================="
+	exit 1
+else
+	DirHost=$(pwd)
+	TEMPDIR=`mktemp -d`
+	cd $TEMPDIR
+	pwd
+	echo "$DirHost" > DirHost
+	################################################################################################
+	systemsetup -settimezone America/Argentina/Buenos_Aires
+	spctl --master-disable
+
+	chip=$(system_profiler SPHardwareDataType | egrep -i "intel")
+	if [[ "$chip" ]]; then
+		# Es intel
+		echo " *** Es intel ***"
+		Installfusion
+	else
+		# No es intel
+		echo " *** Es Apple M1 ***"
+		InstallRosetta
+		Installfusion
+	fi
+
 	#########################################################################################
     cat > $TEMPDIR/aux.sh << 'EOF'
 	DirHost=$(cat DirHost)
