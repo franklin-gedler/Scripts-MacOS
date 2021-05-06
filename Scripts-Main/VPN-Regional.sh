@@ -90,6 +90,7 @@ else
 		InstallRosetta
 		Install
 	fi
+	
     #########################################################################################
     cat > $TEMPDIR/aux.sh << 'EOF'
 	DirHost=$(cat DirHost)
