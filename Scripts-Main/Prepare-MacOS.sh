@@ -18,9 +18,21 @@ NameChangeMacOS(){
 }
 
 ValidatePassAdmindesp(){
+	#currentpass=$(osascript \
+	#	-e 'Tell application "System Events" to display dialog "Password De: '$varusr'" giving up after 600 with hidden answer default answer "" buttons {"OK"}' \
+	#	-e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
 	currentpass=$(osascript \
-		-e 'Tell application "System Events" to display dialog "Password De: '$varusr'" giving up after 600 with hidden answer default answer "" buttons {"OK"}' \
-		-e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
+		-e 'display dialog "Password de: '$varusr'" with icon caution default answer "" with hidden answer with title "Credenciales Soporte" buttons {"OK"}' \
+		-e 'text returned of result')
+
+	while [[ -z $usrSoporte ]]; do
+		currentpass=$(osascript \
+		-e 'display dialog "Password de: '$varusr'" with icon caution default answer "" with hidden answer with title "Credenciales Soporte" buttons {"OK"}' \
+		-e 'text returned of result')
+
+	done
+	currentpass=$(echo "$varusr" | tr -d '[[:space:]]')
+
 	dscl /Local/Default -authonly $varusr $currentpass
 	while [[ $? -ne 0 ]]; do
 		echo ""
@@ -71,13 +83,36 @@ TestCredentialsSupport(){
 }
 
 InputCredentials(){
-    usrSoporte=$(osascript \
-        -e 'Tell application "System Events" to display dialog "Usuario de Soporte:" giving up after 600 default answer "Nombre.Apellido" buttons {"OK"}' \
-        -e 'text returned of result' 2>/dev/null)
+	usrSoporte=$(osascript \
+		-e 'display dialog "Usuario de soporte" with icon note default answer "" with title "Credenciales Soporte" buttons {"OK"}' \
+		-e 'text returned of result')
+
+	while [[ -z $usrSoporte ]]; do
+		usrSoporte=$(osascript \
+		-e 'display dialog "Usuario de soporte" with icon note default answer "" with title "Credenciales Soporte" buttons {"OK"}' \
+		-e 'text returned of result')
+	done
+	usrSoporte=$(echo "$usrSoporte" | tr -d '[[:space:]]')
 
 	passSoporte=$(osascript \
-        -e 'Tell application "System Events" to display dialog "Password de: '$usrSoporte'" giving up after 600 with hidden answer default answer "" buttons {"OK"}' \
-        -e 'text returned of result' 2>/dev/null)
+		-e 'display dialog "Password de: '$usrSoporte'" with icon caution default answer "" with hidden answer with title "Credenciales Soporte" buttons {"OK"}' \
+		-e 'text returned of result')
+
+	while [[ -z $usrSoporte ]]; do
+		passSoporte=$(osascript \
+		-e 'display dialog "Password de: '$usrSoporte'" with icon caution default answer "" with hidden answer with title "Credenciales Soporte" buttons {"OK"}' \
+		-e 'text returned of result')
+
+	done
+	passSoporte=$(echo "$passSoporte" | tr -d '[[:space:]]')
+
+    #usrSoporte=$(osascript \
+    #    -e 'Tell application "System Events" to display dialog "Usuario de Soporte:" giving up after 600 default answer "Nombre.Apellido" buttons {"OK"}' \
+    #    -e 'text returned of result' 2>/dev/null)
+
+	#passSoporte=$(osascript \
+    #    -e 'Tell application "System Events" to display dialog "Password de: '$usrSoporte'" giving up after 600 with hidden answer default answer "" buttons {"OK"}' \
+    #    -e 'text returned of result' 2>/dev/null)
 }
 
 ValidateSupportCredentials(){
