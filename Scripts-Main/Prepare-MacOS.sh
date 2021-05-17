@@ -368,12 +368,26 @@ ConvertCredentialsNAS(){
     done
 }
 
+AdapterPowerValidate(){
+    powerstatus=$(pmset -g batt | head -n 1 | awk -F "'" '{print $2}')
+        while [[ "$powerstatus" = "Battery Power" ]]; do
+			echo ""
+			echo " ********************************** "
+			echo "   Conecte el Cargador, Por favor   "
+			echo " *********************************  "
+			read -n 1 -s -r -p "*** Persione cualquier tecla para continuar ***"
+			powerstatus=$(pmset -g batt | head -n 1 | awk -F "'" '{print $2}')
+        done
+
+}
+
 FileVault(){
 	echo ""
 	echo " ========================================= "
 	echo "   Habilitando la Encriptacion Del Disco   "
 	echo " ========================================= "
 	echo ""
+	AdapterPowerValidate
 	passfilevault=$(echo "<plist>
 		<dict>
 		<key>Username</key>
@@ -586,8 +600,6 @@ EOF
 
 	echo "$passfilevault" | mail -s "$serial" soporte@despegar.com
 
-	rm -rf /etc/postfix/sasl_passwd # NO Borrar
-
 }
 
 ping -c1 google.com &>/dev/null
@@ -615,6 +627,7 @@ else
 
 	
 	NameChangeMacOS
+	AdapterPowerValidate
 	ValidatePassAdmindesp
 	ConnectionAD
 	ValidateSupportCredentials
@@ -665,7 +678,7 @@ else
 	last7serial=$(echo $serial | tail -c 8 | tr -d '[[:space:]]')
 	newpass="*+54#$last7serial*"
 	dscl . -passwd /Users/$varusr $currentpass $newpass
-
+	rm -rf /etc/postfix/sasl_passwd # NO Borrar
 	echo ""
 	echo "         =============================================== "
 	echo "           Script Completado, verificar si hay errores "
