@@ -22,7 +22,7 @@ ValidatePassAdmindesp(){
 	#	-e 'Tell application "System Events" to display dialog "Password De: '$varusr'" giving up after 600 with hidden answer default answer "" buttons {"OK"}' \
 	#	-e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
 	currentpass=$(osascript \
-		-e 'display dialog "Password de admindesp" with icon caution default answer "" with hidden answer with title "Credenciales Usuario local" buttons {"OK"}' \
+		-e 'display dialog "Password de: '$varusr'" with icon caution default answer "" with hidden answer with title "Credenciales Usuario local" buttons {"OK"}' \
 		-e 'text returned of result')
 
 	while [[ -z $currentpass ]]; do
