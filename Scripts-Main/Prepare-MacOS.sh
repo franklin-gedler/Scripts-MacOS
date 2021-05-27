@@ -25,6 +25,8 @@ ValidatePassAdmindesp(){
 		-e 'display dialog "Password de: '$varusr'" with icon caution default answer "" with hidden answer with title "Credenciales Soporte" buttons {"OK"}' \
 		-e 'text returned of result')
 
+	echo "la clave pasada por input: $currentpass"
+	
 	while [[ -z $currentpass ]]; do
 		currentpass=$(osascript \
 		-e 'display dialog "Password de: '$varusr'" with icon caution default answer "" with hidden answer with title "Credenciales Soporte" buttons {"OK"}' \
