@@ -31,7 +31,7 @@ ValidatePassAdmindesp(){
 		-e 'text returned of result')
 
 	done
-	currentpass=$(echo "$varusr" | tr -d '[[:space:]]')
+	currentpass=$(echo "$currentpass" | tr -d '[[:space:]]')
 
 	dscl /Local/Default -authonly $varusr $currentpass
 	while [[ $? -ne 0 ]]; do
