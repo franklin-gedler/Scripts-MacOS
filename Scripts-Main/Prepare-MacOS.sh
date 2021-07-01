@@ -42,8 +42,8 @@ ValidatePassAdmindesp(){
 		echo ""
 		#read -n 1 -s -r -p "*** Persione cualquier tecla para continuar ***"
 		currentpass=$(osascript \
-			-e 'Tell application "System Events" to display dialog "Error!! Reingrese Contraseña de: '$varusr'" giving up after 600 with hidden answer default answer "" buttons {"OK"}' \
-			-e 'text returned of result' 2>/dev/null | tr -d '[[:space:]]')
+		-e 'display dialog "Password de: '$varusr'" with icon caution default answer "" with hidden answer with title "Credenciales Usuario local" buttons {"OK"}' \
+		-e 'text returned of result')
 		dscl /Local/Default -authonly $varusr $currentpass
 	done
 	echo ""
