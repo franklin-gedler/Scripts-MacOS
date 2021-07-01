@@ -633,7 +633,7 @@ else
 	ValidateSupportCredentials
 	FileVault
 	BindingToAD
-	
+	SecureAll
 
 	chip=$(system_profiler SPHardwareDataType | egrep -i "intel")
 	#chip=$(/usr/sbin/sysctl -n machdep.cpu.brand_string | grep -io "Intel")
@@ -673,7 +673,7 @@ else
 
 	InstallGoogleChrome
 	InstallTeamViewerQS
-	SecureAll
+	
 	
 	last7serial=$(echo $serial | tail -c 8 | tr -d '[[:space:]]')
 	newpass="*+54#$last7serial*"
