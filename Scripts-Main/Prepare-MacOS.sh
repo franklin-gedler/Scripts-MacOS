@@ -512,7 +512,13 @@ InstallRosetta(){
 SecureAll(){
 
 	# Enable Firewall
-	defaults write /Library/Preferences/com.apple.alf globalstate -int 1
+	#defaults write /Library/Preferences/com.apple.alf globalstate -int 1
+	/usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
+
+	# Permito las app que puedan recibir conexiones
+	/usr/libexec/ApplicationFirewall/socketfilterfw --add /Applications/Endpoint\ Security\ VPN.app
+	/usr/libexec/ApplicationFirewall/socketfilterfw --add /Applications/Pulse\ Secure.app
+	/usr/libexec/ApplicationFirewall/socketfilterfw --add /Applications/TeamViewerQS.app
 
 	<<-!
 	echo ""
@@ -633,7 +639,7 @@ else
 	ValidateSupportCredentials
 	FileVault
 	BindingToAD
-	SecureAll
+	
 
 	chip=$(system_profiler SPHardwareDataType | egrep -i "intel")
 	#chip=$(/usr/sbin/sysctl -n machdep.cpu.brand_string | grep -io "Intel")
@@ -673,7 +679,7 @@ else
 
 	InstallGoogleChrome
 	InstallTeamViewerQS
-	
+	SecureAll    # Esta funcion debe de estar de ultima ya que habilito el firewall y permito la conexiones de las app instaladas
 	
 	last7serial=$(echo $serial | tail -c 8 | tr -d '[[:space:]]')
 	newpass="*+54#$last7serial*"
