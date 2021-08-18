@@ -27,14 +27,28 @@ Vpn(){
 }
 
 Install(){
-	CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
-    CheckpointMojave="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E80.71-Mojave.pkg"
-    MacVersion=$(sw_vers -productVersion | awk -F '.' '{print $1 "." $2}')
-	if [[ "$MacVersion" = "10.14" ]]; then
-		Vpn $CheckpointMojave Endpoint_Security_VPN_E80.71-Mojave.pkg
+
+	Checkpoint="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E84_70.pkg"
+	CurrentInstalled=$(ls -la /Applications | egrep -o "Endpoint\ Security\ VPN.app")
+
+	if [[ -z $CurrentInstalled ]]; then
+		# Ninguna instalacion de checkpoint, solo instalo
+		Vpn $Checkpoint Endpoint_Security_VPN_E84_70.pkg
 	else
-		Vpn $CheckpointCatalina Endpoint_Security_VPN_E82-Catalina.pkg
+		# Instalacion de Checkpoint existente, se desinstala y se instala de vuelta
+		/Library/Application\ Support/Checkpoint/Endpoint\ Connect/uninstall --uninstall
+		Vpn $Checkpoint Endpoint_Security_VPN_E84_70.pkg
+
 	fi
+
+	#CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
+    #CheckpointMojave="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E80.71-Mojave.pkg"
+    #MacVersion=$(sw_vers -productVersion | awk -F '.' '{print $1 "." $2}')
+	#if [[ "$MacVersion" = "10.14" ]]; then
+	#	Vpn $CheckpointMojave Endpoint_Security_VPN_E80.71-Mojave.pkg
+	#else
+	#	Vpn $CheckpointCatalina Endpoint_Security_VPN_E82-Catalina.pkg
+	#fi
 }
 
 InstallRosetta(){
