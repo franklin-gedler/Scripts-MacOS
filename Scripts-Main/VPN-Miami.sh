@@ -91,14 +91,28 @@ InstallRosetta(){
 }
 
 Install(){
-	PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
-    PulseMojave="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Mojave.pkg"
-    MacVersion=$(sw_vers -productVersion | awk -F '.' '{print $1 "." $2}')
-    if [[ "$MacVersion" = "10.14" ]]; then
-		Vpn $PulseMojave PulseSecure-Mojave.pkg
+
+	PulseSecure="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-9_1R12.pkg"
+	CurrentInstalled=$(ls -la /Applications | egrep -o "Pulse Secure.app")
+
+	if [[ -z $CurrentInstalled ]]; then
+		# Ninguna instalacion de Pulse, solo instalo
+		Vpn $PulseSecure PulseSecure-9_1R12.pkg
 	else
-		Vpn $PulseCatalina PulseSecure-Catalina.pkg
+		# Instalacion de Pulse existente, se desinstala y se instala de vuelta
+		/Library/Application\ Support/Pulse\ Secure/Pulse/Uninstall.app/Contents/Resources/uninstall.sh 0
+		Vpn $PulseSecure PulseSecure-9_1R12.pkg
+
 	fi
+
+	#PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
+    #PulseMojave="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Mojave.pkg"
+    #MacVersion=$(sw_vers -productVersion | awk -F '.' '{print $1 "." $2}')
+    #if [[ "$MacVersion" = "10.14" ]]; then
+	#	Vpn $PulseMojave PulseSecure-Mojave.pkg
+	#else
+	#	Vpn $PulseCatalina PulseSecure-Catalina.pkg
+	#fi
 }
 
 ping -c1 google.com &>/dev/null
