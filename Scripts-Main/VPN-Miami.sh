@@ -105,6 +105,9 @@ Install(){
 
 	fi
 
+	# Habilito el PulseSecure en el firewall
+	/usr/libexec/ApplicationFirewall/socketfilterfw --add /Applications/Pulse\ Secure.app
+
 	#PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
     #PulseMojave="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Mojave.pkg"
     #MacVersion=$(sw_vers -productVersion | awk -F '.' '{print $1 "." $2}')

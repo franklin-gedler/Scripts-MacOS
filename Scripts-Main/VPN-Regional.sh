@@ -40,6 +40,8 @@ Install(){
 		Vpn $Checkpoint Endpoint_Security_VPN_E84_70.pkg
 
 	fi
+	# Habilito Checkpoint en el firewall
+	/usr/libexec/ApplicationFirewall/socketfilterfw --add /Applications/Endpoint\ Security\ VPN.app
 
 	#CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
     #CheckpointMojave="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E80.71-Mojave.pkg"

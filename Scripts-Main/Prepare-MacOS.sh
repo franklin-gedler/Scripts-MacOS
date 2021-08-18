@@ -647,10 +647,10 @@ else
 		# Es intel
 		echo " *** Es intel ***"
 		Glpi
-		
-		PulseSecure="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
+
+		PulseSecure="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-9_1R12.pkg"
 		Checkpoint="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E84_70.pkg"
-		Vpn $Checkpoint Endpoint_Security_VPN_E84_70.pkg $PulseSecure PulseSecure-Catalina.pkg
+		Vpn $Checkpoint Endpoint_Security_VPN_E84_70.pkg $PulseSecure PulseSecure-9_1R12.pkg
 		
 		#CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
 		#PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
@@ -670,9 +670,9 @@ else
 		InstallRosetta
 		Glpi
 		
-		PulseSecure="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
+		PulseSecure="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-9_1R12.pkg"
 		Checkpoint="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E84_70.pkg"
-		Vpn $Checkpoint Endpoint_Security_VPN_E84_70.pkg $PulseSecure PulseSecure-Catalina.pkg
+		Vpn $Checkpoint Endpoint_Security_VPN_E84_70.pkg $PulseSecure PulseSecure-9_1R12.pkg
 
 		#CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
 		#PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
