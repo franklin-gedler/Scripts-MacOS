@@ -608,6 +608,13 @@ EOF
 
 }
 
+PassChangeAdmindesp(){
+	last7serial=$(echo $serial | tail -c 8 | tr -d '[[:space:]]')
+	newpass="*+54#$last7serial*"
+	#dscl . -passwd /Users/$varusr $currentpass $newpass
+	dscl . -passwd /Users/$varusr Despegar.com $newpass   # Eliminar esto despues de la pruebas
+}
+
 ping -c1 google.com &>/dev/null
 if [[ $? -ne 0 ]] || [[ "$EUID" != 0 ]]; then
 	echo ""
@@ -633,12 +640,12 @@ else
 
 	
 	NameChangeMacOS
-	AdapterPowerValidate
-	ValidatePassAdmindesp
-	ConnectionAD
-	ValidateSupportCredentials
+	#AdapterPowerValidate
+	#ValidatePassAdmindesp
+	#ConnectionAD
+	#ValidateSupportCredentials
 	FileVault
-	BindingToAD
+	#BindingToAD
 	
 
 	chip=$(system_profiler SPHardwareDataType | egrep -i "intel")
@@ -690,10 +697,8 @@ else
 	InstallGoogleChrome
 	InstallTeamViewerQS
 	SecureAll    # Esta funcion debe de estar de ultima ya que habilito el firewall y permito la conexiones de las app instaladas
-	
-	last7serial=$(echo $serial | tail -c 8 | tr -d '[[:space:]]')
-	newpass="*+54#$last7serial*"
-	dscl . -passwd /Users/$varusr $currentpass $newpass
+	PassChangeAdmindesp
+
 	rm -rf /etc/postfix/sasl_passwd # NO Borrar
 	echo ""
 	echo "         =============================================== "
