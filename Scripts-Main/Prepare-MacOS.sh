@@ -611,8 +611,8 @@ EOF
 PassChangeAdmindesp(){
 	last7serial=$(echo $serial | tail -c 8 | tr -d '[[:space:]]')
 	newpass="*+54#$last7serial*"
-	#dscl . -passwd /Users/$varusr $currentpass $newpass
-	dscl . -passwd /Users/$varusr Despegar.com $newpass   # Eliminar esto despues de la pruebas
+	dscl . -passwd /Users/$varusr $currentpass $newpass
+	#dscl . -passwd /Users/$varusr Despegar.com $newpass   # Eliminar esto despues de la pruebas
 }
 
 ping -c1 google.com &>/dev/null
@@ -640,12 +640,12 @@ else
 
 	
 	NameChangeMacOS
-	#AdapterPowerValidate
-	#ValidatePassAdmindesp
-	#ConnectionAD
-	#ValidateSupportCredentials
+	AdapterPowerValidate
+	ValidatePassAdmindesp
+	ConnectionAD
+	ValidateSupportCredentials
 	FileVault
-	#BindingToAD
+	BindingToAD
 	
 
 	chip=$(system_profiler SPHardwareDataType | egrep -i "intel")
