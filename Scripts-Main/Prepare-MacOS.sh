@@ -442,10 +442,18 @@ InstallGoogleChrome(){
 InstallTeamViewerQS(){
 	echo ""
 	echo " ====================================================="
-	echo "              Instalando Team Viewer QS               "
+	echo "             Instalando Team Viewer Host              "
 	echo " ====================================================="
 	echo ""
 
+	curl -LO# https://dl.teamviewer.com/download/version_15x/CustomDesign/TeamViewerHost-idc6gh9rc7.dmg
+	hdiutil attach TeamViewerHost-idc6gh9rc7.dmg -nobrowse 1>/dev/null
+	cp "/Volumes/TeamViewerHost/Install TeamViewerHost.app/Contents/Resources/Install TeamViewerHost.pkg" $TEMPDIR
+	mv "Install TeamViewerHost.pkg" TeamViewerHost-idc6gh9rc7.pkg
+	installer -pkg TeamViewerHost-idc6gh9rc7.pkg -target /
+	hdiutil detach /Volumes/TeamViewerHost/ 1>/dev/null
+
+	<<-!
 	# Variables que puedes tocar
 	name="TeamViewerQSMacOS.zip"
 	GITHUB_API_TOKEN="22c32578f7471802dd12913947471829fc892717"
@@ -475,7 +483,7 @@ InstallTeamViewerQS(){
 	unzip TeamViewerQSMacOS.zip 1>/dev/null
 
 	cp -r TeamViewerQS.app /Applications/
-
+	!
 	echo ""
 	echo " *************** "
 	echo "   Listo . . .   "
@@ -518,7 +526,8 @@ SecureAll(){
 	# Permito las app que puedan recibir conexiones
 	/usr/libexec/ApplicationFirewall/socketfilterfw --add /Applications/Endpoint\ Security\ VPN.app
 	/usr/libexec/ApplicationFirewall/socketfilterfw --add /Applications/Pulse\ Secure.app
-	/usr/libexec/ApplicationFirewall/socketfilterfw --add /Applications/TeamViewerQS.app
+	#/usr/libexec/ApplicationFirewall/socketfilterfw --add /Applications/TeamViewerQS.app
+	/usr/libexec/ApplicationFirewall/socketfilterfw --add /Applications/TeamViewerHost.app
 
 	<<-!
 	echo ""
