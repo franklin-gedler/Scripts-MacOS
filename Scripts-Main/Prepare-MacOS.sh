@@ -439,7 +439,7 @@ InstallGoogleChrome(){
 	echo ""
 }
 
-InstallTeamViewerQS(){
+InstallTeamViewerHost(){
 	echo ""
 	echo " ====================================================="
 	echo "             Instalando Team Viewer Host              "
@@ -704,7 +704,7 @@ else
 	fi
 
 	InstallGoogleChrome
-	InstallTeamViewerQS
+	InstallTeamViewerHost
 	SecureAll    # Esta funcion debe de estar de ultima ya que habilito el firewall y permito la conexiones de las app instaladas
 	PassChangeAdmindesp
 
