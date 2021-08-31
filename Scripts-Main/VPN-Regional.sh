@@ -7,14 +7,29 @@ cat > $TEMPDIR/Trac.config << 'EOF'
 EOF
 }
 
+DownloadFileInstaller(){
+    GITHUB_API_TOKEN="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"
+    CURL_ARGS="-LJO#"
+    
+    curl $CURL_ARGS -H "Authorization: token $GITHUB_API_TOKEN" -H "Accept: application/octet-stream" "$1"
+}
+
 Vpn(){
 	echo ""
 	echo "=============================================================="
 	echo "                  Instalando VPN Regional . . .               "
 	echo "=============================================================="
 	ConfigVpnRegional
-	curl -LO# $1
-	installer -pkg $2 -target /
+	#curl -LO# $1
+	#installer -pkg $2 -target /
+	
+	Checkpoint='https://api.github.com/repos/franklin-gedler/Scripts-MacOS/releases/assets/43733382'
+    NameInstaller='Endpoint_Security_VPN_E84_70.pkg'
+
+    DownloadFileInstaller $Checkpoint
+    
+    installer -pkg $NameInstaller -target /
+	
 	launchctl unload /Library/LaunchDaemons/com.checkpoint.epc.service.plist
 	#newuuid=$(uuidgen)
 	#perl -i -pe "s/varuuid/$newuuid/g" LangPack1.xml
@@ -28,16 +43,15 @@ Vpn(){
 
 Install(){
 
-	Checkpoint="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E84_70.pkg"
 	CurrentInstalled=$(ls -la /Applications | egrep -o "Endpoint\ Security\ VPN.app")
 
 	if [[ -z $CurrentInstalled ]]; then
 		# Ninguna instalacion de checkpoint, solo instalo
-		Vpn $Checkpoint Endpoint_Security_VPN_E84_70.pkg
+		Vpn
 	else
 		# Instalacion de Checkpoint existente, se desinstala y se instala de vuelta
 		/Library/Application\ Support/Checkpoint/Endpoint\ Connect/uninstall --uninstall
-		Vpn $Checkpoint Endpoint_Security_VPN_E84_70.pkg
+		Vpn
 
 	fi
 	# Habilito Checkpoint en el firewall

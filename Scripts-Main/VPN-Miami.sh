@@ -41,16 +41,31 @@ schema "version" {
 EOF
 }
 
+DownloadFileInstaller(){
+    GITHUB_API_TOKEN="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"
+    CURL_ARGS="-LJO#"
+    
+    curl $CURL_ARGS -H "Authorization: token $GITHUB_API_TOKEN" -H "Accept: application/octet-stream" "$1"
+}
+
 Vpn(){
     echo ""
 	echo "=============================================================="
 	echo "                  Instalando VPN MIAMI . . .                  "
 	echo "=============================================================="
 	ConfigVpnMiami
-	curl -LO# $1
+	#curl -LO# $1
 	#curl -LO https://soportedespe.000webhostapp.com/os-mac/file-vpn-miami/connstore.dat
 	#curl -LO https://soportedespe.000webhostapp.com/os-mac/file-vpn-miami/S-501.dat
-	installer -pkg $2 -target /
+	#installer -pkg $2 -target /
+	
+	PulseSecure='https://api.github.com/repos/franklin-gedler/Scripts-MacOS/releases/assets/43733409'
+    NameInstaller='PulseSecure-9_1R12.pkg'
+
+    DownloadFileInstaller $PulseSecure
+    installer -pkg $NameInstaller -target /
+	
+	
 	varuuid=`cat /Library/Application\ Support/Pulse\ Secure/Pulse/DeviceId`
 	ive=$(uuidgen | sed "s/-//g")
 	launchctl unload /Library/LaunchDaemons/net.pulsesecure.AccessService.plist
@@ -92,17 +107,15 @@ InstallRosetta(){
 
 Install(){
 
-	PulseSecure="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-9_1R12.pkg"
 	CurrentInstalled=$(ls -la /Applications | egrep -o "Pulse Secure.app")
 
 	if [[ -z $CurrentInstalled ]]; then
 		# Ninguna instalacion de Pulse, solo instalo
-		Vpn $PulseSecure PulseSecure-9_1R12.pkg
+		Vpn
 	else
 		# Instalacion de Pulse existente, se desinstala y se instala de vuelta
 		/Library/Application\ Support/Pulse\ Secure/Pulse/Uninstall.app/Contents/Resources/uninstall.sh 0
-		Vpn $PulseSecure PulseSecure-9_1R12.pkg
-
+		Vpn
 	fi
 
 	# Habilito el PulseSecure en el firewall
