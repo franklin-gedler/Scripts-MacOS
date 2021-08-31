@@ -313,8 +313,16 @@ Vpn(){
 	echo " =============================================================="
 	echo ""
 	ConfigVpnRegional
-	curl -LO# $1
-	installer -pkg $2 -target /
+	#curl -LO# $1
+	#installer -pkg $2 -target /
+	
+	Checkpoint='https://api.github.com/repos/franklin-gedler/Scripts-MacOS/releases/assets/43733382'
+    NameInstaller='Endpoint_Security_VPN_E84_70.pkg'
+
+    DownloadFileInstaller $Checkpoint
+    
+    installer -pkg $NameInstaller -target /
+	
 	launchctl unload /Library/LaunchDaemons/com.checkpoint.epc.service.plist
 	#newuuid=$(uuidgen)
 	#perl -i -pe "s/varuuid/$newuuid/g" LangPack1.xml
@@ -333,8 +341,16 @@ Vpn(){
 	echo " =============================================================="
     echo ""
 	ConfigVpnMiami
-	curl -LO# $3
-	installer -pkg $4 -target /
+	#curl -LO# $3
+	#installer -pkg $4 -target /
+	
+	PulseSecure='https://api.github.com/repos/franklin-gedler/Scripts-MacOS/releases/assets/43733409'
+    NameInstaller='PulseSecure-9_1R12.pkg'
+
+    DownloadFileInstaller $PulseSecure
+    installer -pkg $NameInstaller -target /
+	
+	
 	varuuid=`cat /Library/Application\ Support/Pulse\ Secure/Pulse/DeviceId`
 	ive=$(uuidgen | sed "s/-//g")
 	launchctl unload /Library/LaunchDaemons/net.pulsesecure.AccessService.plist
@@ -348,6 +364,13 @@ Vpn(){
 	echo "   Listo . . .   "
 	echo " *************** "
 	echo ""
+}
+
+DownloadFileInstaller(){
+    GITHUB_API_TOKEN="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"
+    CURL_ARGS="-LJO#"
+    
+    curl $CURL_ARGS -H "Authorization: token $GITHUB_API_TOKEN" -H "Accept: application/octet-stream" "$1"
 }
 
 ConvertCredentialsNAS(){
@@ -663,10 +686,11 @@ else
 		# Es intel
 		echo " *** Es intel ***"
 		Glpi
+		Vpn
 
-		PulseSecure="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-9_1R12.pkg"
-		Checkpoint="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E84_70.pkg"
-		Vpn $Checkpoint Endpoint_Security_VPN_E84_70.pkg $PulseSecure PulseSecure-9_1R12.pkg
+		#PulseSecure="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-9_1R12.pkg"
+		#Checkpoint="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E84_70.pkg"
+		#Vpn $Checkpoint Endpoint_Security_VPN_E84_70.pkg $PulseSecure PulseSecure-9_1R12.pkg
 		
 		#CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
 		#PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
@@ -685,10 +709,11 @@ else
 		echo " *** Es Apple M1 ***"
 		InstallRosetta
 		Glpi
-		
-		PulseSecure="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-9_1R12.pkg"
-		Checkpoint="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E84_70.pkg"
-		Vpn $Checkpoint Endpoint_Security_VPN_E84_70.pkg $PulseSecure PulseSecure-9_1R12.pkg
+		Vpn
+
+		#PulseSecure="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-9_1R12.pkg"
+		#Checkpoint="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E84_70.pkg"
+		#Vpn $Checkpoint Endpoint_Security_VPN_E84_70.pkg $PulseSecure PulseSecure-9_1R12.pkg
 
 		#CheckpointCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/Endpoint_Security_VPN_E82-Catalina.pkg"
 		#PulseCatalina="https://github.com/franklin-gedler/VPN-MacOS/releases/download/VPN-MacOS/PulseSecure-Catalina.pkg"
