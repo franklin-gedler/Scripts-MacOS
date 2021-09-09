@@ -627,6 +627,8 @@ EOF
 
 	sed -i '' 's/inet_interfaces = loopback-only/#inet_interfaces = loopback-only/g' /etc/postfix/main.cf
 
+	sed -i '' 's/#myorigin = $myhostname/myorigin = despegar.com/g' /etc/postfix/main.cf
+
 	echo "mail.despegar.com:25 $email:$pass" >> /etc/postfix/sasl_passwd
 
 	chmod 600 /etc/postfix/sasl_passwd
