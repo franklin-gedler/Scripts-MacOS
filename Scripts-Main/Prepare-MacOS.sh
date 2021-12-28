@@ -616,7 +616,7 @@ PassChangeAdmindesp(){
 }
 
 ping -c1 google.com &>/dev/null
-if [[ $? -ne 0 ]] || [[ "$EUID" != 0 ]]; then
+if [[ $? -ne 1 ]] || [[ "$EUID" != 0 ]]; then
 	echo ""
 	echo " ============================================================= "
 	echo "   Este Script requiere sudo o no tienes conexion a internet   "
