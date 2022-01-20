@@ -2,9 +2,9 @@
 
     # Variables que puedes tocar
     name="jre-8u291-windows-i586.exe"
-    GITHUB_API_TOKEN="569b159288f7c200c33d6472bd5f26a9f2aa7d21"
-    owner="franklin-gedler"
-    repo="Only-Download-Prepare-Windows10"
+    GITHUB_API_TOKEN="Token Generado por Github"
+    owner="Cuenta Github"
+    repo="Nombre Repositorio"
     tag="1"
 
     # Variables que no se tocan
