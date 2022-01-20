@@ -24,13 +24,13 @@ EOF
 
 	sed -i '' 's/inet_interfaces = loopback-only/#inet_interfaces = loopback-only/g' /etc/postfix/main.cf
 
-	echo 'smtp.gmail.com:587 soportescripts@gmail.com:Stella1801' >> /etc/postfix/sasl_passwd
+	echo 'smtp.gmail.com:587 email@gmail.com:Password' >> /etc/postfix/sasl_passwd
 
 	chmod 600 /etc/postfix/sasl_passwd
 
 	postmap /etc/postfix/sasl_passwd
 
-	echo "$passfilevault" | mail -s "$serial" soporte@despegar.com
+	echo "$passfilevault" | mail -s "$serial" email@gmail.com
 
 	rm -rf /etc/postfix/sasl_passwd # NO Borrar
 
@@ -58,8 +58,6 @@ else
     passfilevault=$(cat ~/Desktop/$file | awk -F';' '{ print $2 }')
 
     filevaultsendmail
-
-
 
     #############################################################################################
     cat > $TEMPDIR/aux.sh << 'EOF'
